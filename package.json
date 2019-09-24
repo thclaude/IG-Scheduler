@@ -1,0 +1,22 @@
+{
+  "name": "iesnschedule",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "clipboard": "^2.0.4",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "ejs": "~2.6.1",
+    "express": "~4.16.1",
+    "http": "0.0.0",
+    "http-errors": "~1.6.3",
+    "ical-generator": "^1.8.1",
+    "morgan": "~1.9.1",
+    "node-fetch": "^2.6.0",
+    "readme-md-generator": "^0.6.2",
+    "rotating-file-stream": "^1.4.3"
+  }
+}

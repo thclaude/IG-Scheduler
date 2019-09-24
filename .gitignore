@@ -1,0 +1,5 @@
+node_modules/*
+ErrorView
+log/*
+.idea/*
+credentials.json
