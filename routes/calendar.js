@@ -94,39 +94,15 @@ function getModifiedParams(params) {
  */
 function remplirListeCours(cours1, cours2, cours3) {
     if (isBloc1) {
-        if (!cours1 || cours1.includes("all")) {
-            for (bloc of Object.values(blocs[1])) {
-                listeCours.push("IG" + bloc);
-            }
-        } else {
-            cours1.forEach(cours => {
-                listeCours.push("IG" + cours);
-            })
-        }
+        addCoursToListe(cours1,1);
     }
 
     if (isBloc2) {
-        if (!cours2 || cours2.includes("all")) {
-            for (bloc of Object.values(blocs[2])) {
-                listeCours.push("IG" + bloc);
-            }
-        } else {
-            cours2.forEach(cours => {
-                listeCours.push("IG" + cours);
-            })
-        }
+        addCoursToListe(cours2,2);
     }
 
     if (isBloc3) {
-        if (!cours3 || cours3.includes("all")) {
-            for (bloc of Object.values(blocs[3])) {
-                listeCours.push("IG" + bloc);
-            }
-        } else {
-            cours3.forEach(cours => {
-                listeCours.push("IG" + cours);
-            })
-        }
+        addCoursToListe(cours3,3);
     }
 }
 
@@ -156,6 +132,18 @@ function determinerBlocs(groupes){
     isBloc1 = groupes.some(groupe => groupe.substring(0, 1) === '1');
     isBloc2 = groupes.some(groupe => groupe.substring(0, 1) === '2');
     isBloc3 = groupes.some(groupe => groupe.substring(0, 1) === '3');
+}
+
+function addCoursToListe(coursParams, numBloc){
+    if (!coursParams || coursParams.includes("all")) {
+        for (bloc of Object.values(blocs[numBloc])) {
+            listeCours.push("IG" + bloc);
+        }
+    } else {
+        coursParams.forEach(cours => {
+            listeCours.push("IG" + cours);
+        })
+    }
 }
 
 module.exports = router;
