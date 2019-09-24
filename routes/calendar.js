@@ -134,7 +134,7 @@ function remplirListeCours(cours1, cours2, cours3) {
     Clean la liste des cours avec les cours utiles & évite les doublons (cours généraux) si plusieurs groupes du même blocs sont sélectionnés
 
     Amélioration :
-        - Mettre direct le JSON dans le Set ? Possible ? Enlèverai automatiquement les doublons
+        - Mettre direct le JSON dans le Set ? Possible/utile ? Enlèverai automatiquement les doublons
  */
 function cleanCours(cours) {
     let transformedString = `${cours.start}/${cours.end}/${cours.location}/${cours.title}/${cours.details}`; // On crée une chaîne uniquement
