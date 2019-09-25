@@ -30,6 +30,14 @@
                 $('.selectpicker').selectpicker('mobile');
             }
         });
+        $('.selectWithAllOption').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            if(clickedIndex === 0){
+                for(let option of e.target.options){
+                    option.selected = isSelected;
+                }
+                $('.selectWithAllOption').selectpicker('refresh');
+            }
+        });
     </script>
 <%}%>
 </body>
