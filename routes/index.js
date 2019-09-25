@@ -25,11 +25,11 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/', function (req, res, next) {
-    if (!req.body.Groupes) {
+    if (!req.body.Groupes) { // Aucun groupe sélectionné
         res.render('index', {
             calendarURL: '',
             listeSelect: listeSelect,
-            calendarURLRedirect: true,
+            calendarURLRedirect: falsse,
             toastrNotif: true,
             toastrObject: {
                 type: 'error',
