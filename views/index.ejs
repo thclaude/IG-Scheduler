@@ -31,7 +31,7 @@
                             <div class="card-body">
                                 <div class="form-group"><label>Groupe</label><select class="form-control selectpicker" multiple="" title="Sélection du groupe..." name="Groupes"><option value="1A">Groupe A</option><option value="1B">Groupe B</option><option value="1C">Groupe C</option><option value="1D">Groupe D</option><option value="1E">Groupe E</option><option value="1F" disabled>Groupe F</option><option value="1G" disabled>Groupe G</option><option value="1H" disabled>Groupe H</option></select></div>
                                 <div
-                                        class="form-group"><label>Cours</label><select class="form-control selectpicker" multiple data-live-search="true" title="Sélection des cours..." name="Cours">
+                                        class="form-group"><label>Cours</label><select data-none-results-text="Aucun résultat pour {0}" class="form-control selectpicker selectWithAllOption" multiple data-live-search="true" title="Sélection des cours..." name="Cours">
                                         <option value="1">Tous</option>
                                         <% listeSelect[1].map(cours=> { %>
                                             <option value="<%= cours.value%>"> <%= cours.text %> </option>
@@ -48,7 +48,7 @@
                             <div class="card-body">
                                 <div class="form-group"><label>Groupe</label><select class="form-control selectpicker" multiple="" title="Sélection du groupe..." name="Groupes"><option value="2A">Groupe A</option><option value="2B">Groupe B</option><option value="2C" disabled>Groupe C</option><option value="2D" disabled>Groupe D</option><option value="2E" disabled>Groupe E</option><option value="2F" disabled>Groupe F</option><option value="2G" disabled>Groupe G</option><option value="2H" disabled>Groupe H</option></select></div>
                                 <div
-                                        class="form-group"><label>Cours</label><select class="form-control selectpicker" multiple data-live-search="true" title="Sélection des cours..." name="Cours">
+                                        class="form-group"><label>Cours</label><select data-none-results-text="Aucun résultat pour {0}" class="form-control selectpicker selectWithAllOption" multiple data-live-search="true" title="Sélection des cours..." name="Cours">
                                         <option value="2">Tous</option>
                                         <% listeSelect[2].map(cours=> { %>
                                             <option value="<%= cours.value%>"> <%= cours.text %> </option>
@@ -65,7 +65,7 @@
                             <div class="card-body">
                                 <div class="form-group"><label>Groupe</label><select class="form-control selectpicker" multiple="" title="Sélection du groupe..." name="Groupes"><option value="3A">Groupe A</option><option value="3B">Groupe B</option><option value="3C" disabled>Groupe C</option><option value="3D">Groupe D</option><option value="3E" disabled>Groupe E</option><option value="3F" disabled>Groupe F</option><option value="3G" disabled>Groupe G</option><option value="3H" disabled>Groupe H</option></select></div>
                                 <div
-                                        class="form-group"><label>Cours</label><select class="form-control selectpicker" multiple data-live-search="true" title="Sélection des cours..." name="Cours">
+                                        class="form-group"><label>Cours</label><select data-none-results-text="Aucun résultat pour {0}" class="form-control selectpicker" multiple data-live-search="true" title="Sélection des cours..." name="Cours">
                                         <optgroup label="Tronc commun">
                                             <% let i = 0;
                                             listeSelect[3].forEach(cours => { %>
