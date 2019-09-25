@@ -21,16 +21,23 @@ for (let bloc in blocs) {
 }
 
 router.get('/', function (req, res, next) {
-    res.render('index', {calendarURL: '', listeSelect: listeSelect, calendarURLRedirect: false});
+    res.render('index', {calendarURL: '', listeSelect: listeSelect, calendarURLRedirect: false, toastrNotif: false});
 });
 
 router.post('/', function (req, res, next) {
     if (!req.body.Groupes) {
-        /*
-            Pas de groupe sélectionné
-                - Ajouter un Toast d'erreur ?
-         */
-        res.redirect('/');
+        res.render('index', {
+            calendarURL: '',
+            listeSelect: listeSelect,
+            calendarURLRedirect: false,
+            toastrNotif: true,
+            toastrObject: {
+                type: 'error',
+                text: 'Aucun groupe sélectionné',
+                timeout: 5000
+            }
+        });
+
     } else {
         let fullURL = 'https://iesn.thibaultclaude.be' + req.originalUrl;
 
@@ -72,7 +79,13 @@ router.post('/', function (req, res, next) {
         res.render('index', {
             calendarURL: `${fullURL}calendar?${groupes.map(groupe => `grp[]=${groupe}`).join('&')}${paramCrsFull}`,
             listeSelect: listeSelect,
-            calendarURLRedirect: true
+            calendarURLRedirect: true,
+            toastrNotif: true,
+            toastrObject: {
+                type: 'success',
+                text: 'Calendrier généré avec succès',
+                timeout: 2000
+            }
         });
     }
 });
