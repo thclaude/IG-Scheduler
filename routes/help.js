@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', function (req, res, next) {
-    res.render('help');
+    res.render('help', { toastrNotif: false});
 });
 
 module.exports = router;
