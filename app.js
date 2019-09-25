@@ -42,7 +42,7 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-    res.render('error', {errorCode: err.status});
+    res.render('error', {errorCode: err.status, toastrNotif: false});
 });
 
 http.createServer(app).listen(portServerWeb, function () {
