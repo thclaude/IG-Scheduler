@@ -9,6 +9,13 @@ const coursMobileWeb = Array.from(require('../settings.json').coursOptionWeb);
 const datePattern = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const grpDataIntelligence = require('../settings.json').groupeDataIntelligence;
 
+// Structure message à envoyer en cas d'erreur lors du fetch
+let discordMessage = {
+    content: `<@${credentials.idDiscord}>`,
+    avatar_url: "https://portail.henallux.be/favicon-96x96.png",
+    username: "IESNScheduler"
+};
+
 let listeCours; /* Contiendra la liste des cours que l'utilisateur veut suivre */
 let jsonCours; /* Contiendra la réponse de l'API Horaire clean des cours inutiles/non suivis */
 let coursCommuns; /* Contiendra les cours communs / déjà rencontrés pour ne pas avoir de doublons dans l'horaire */
@@ -58,9 +65,25 @@ router.get('/', function (req, res, next) {
                 /*
                 Error lors du fetch
                     - Arrivera quand ils vont "reset" le compteur (+930 aux codes des groupes tous les jours) ou si le site est down..
-                    - Envoyer un mail d'alert pour agir plus rapidement ?
+                    - Envoie un message discord quand l'erreur se produit
                 */
-                console.log(err)
+                discordMessage.embeds = [{
+                    title: "Fetch Error",
+                    color: 16723200,
+                    timestamp: new Date(Date.now()),
+                    fields: [
+                        {
+                            name: "Error messsage",
+                            value: err
+                        }
+                    ]
+                }];
+
+                fetch(credentials.webhookURL, {
+                    method: 'post',
+                    body: JSON.stringify(discordMessage),
+                    headers: { 'Content-Type': 'application/json' },
+                }).catch(err => console.log(err));
             })
     } else {
         /* Au moins un groupe entré est invalide => On génère pas de calendrier, on fait pas de fetch*/
@@ -69,11 +92,11 @@ router.get('/', function (req, res, next) {
 
 /*
     Retourne le bon code du groupe en fonction de la date
-
+    L'update se fait entre 6h et 6h30 (à affiner)
     @Arthur Detroux
  */
 function getModifiedParams(params) {
-    const init_date = new Date("2019-09-20");
+    const init_date = new Date('September 20, 2019 06:15:00');
     const one_day = 1000 * 60 * 60 * 24;
 
     let now = new Date();
