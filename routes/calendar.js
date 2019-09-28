@@ -92,11 +92,11 @@ router.get('/', function (req, res, next) {
 
 /*
     Retourne le bon code du groupe en fonction de la date
-    L'update se fait entre 6h et 6h30 (à affiner)
+    L'update se fait à 6h
     @Arthur Detroux
  */
 function getModifiedParams(params) {
-    const init_date = new Date('September 20, 2019 06:15:00');
+    const init_date = new Date('September 20, 2019 06:00:00');
     const one_day = 1000 * 60 * 60 * 24;
 
     let now = new Date();
