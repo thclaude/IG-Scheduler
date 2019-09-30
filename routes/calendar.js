@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const utils = require('../utils.js');
 const classes = require('../classes.json');
 const blocs = require('../blocs.json');
 const credentials = require('../credentials.json');
@@ -8,13 +9,7 @@ const ical = require("ical-generator");
 const coursMobileWeb = Array.from(require('../settings.json').coursOptionWeb);
 const datePattern = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const grpDataIntelligence = require('../settings.json').groupeDataIntelligence;
-
-// Structure message à envoyer en cas d'erreur lors du fetch
-let discordMessage = {
-    content: `<@${credentials.idDiscord}>`,
-    avatar_url: "https://portail.henallux.be/favicon-96x96.png",
-    username: "IESNScheduler"
-};
+const listeSelect = utils.getListeSelect();
 
 let listeCours; /* Contiendra la liste des cours que l'utilisateur veut suivre */
 let jsonCours; /* Contiendra la réponse de l'API Horaire clean des cours inutiles/non suivis */
@@ -29,11 +24,11 @@ router.get('/', function (req, res, next) {
     let calendar = ical({name: "Cours", timezone: "Europe/Brussels"});
 
     if (req.query.grp.every(groupe => Object.keys(classes).includes(groupe))) { /* Check que les groupes existent bien dans le fichier JSON */
+
         determinerBlocs(req.query.grp);
         remplirListeCours(req.query.crs1, req.query.crs2, req.query.crs3);
 
-        let fetchURLParams = `[${req.query.grp.map(groupe => `%22${getModifiedParams(classes[groupe])}%22`).join(', ')}]`; /* Mets au bon format les groupes avant la requête */
-
+        let fetchURLParams = `[${req.query.grp.map(groupe => `%22${classes[groupe]}%22`).join(', ')}]`; /* Mets au bon format les groupes avant la requête */
         fetch(`https://portail.henallux.be/api/plannings/promotion/${fetchURLParams}`, {
             "method": "GET",
             "headers": {
@@ -57,58 +52,26 @@ router.get('/', function (req, res, next) {
                     calendar.serve(res);
                 })
                 .catch(err => {
-                    /* Error lors du passage de response en json */
-                    console.log(err)
+                    utils.envoiMessageDiscord("Error json res calendar.js " + err);
                 })
         })
             .catch(err => {
-                /*
-                Error lors du fetch
-                    - Arrivera quand ils vont "reset" le compteur (+930 aux codes des groupes tous les jours) ou si le site est down..
-                    - Envoie un message discord quand l'erreur se produit
-                */
-                discordMessage.embeds = [{
-                    title: "Fetch Error",
-                    color: 16723200,
-                    timestamp: new Date(Date.now()),
-                    fields: [
-                        {
-                            name: "Error messsage",
-                            value: err
-                        }
-                    ]
-                }];
-
-                fetch(credentials.webhookURL, {
-                    method: 'post',
-                    body: JSON.stringify(discordMessage),
-                    headers: { 'Content-Type': 'application/json' },
-                }).catch(err => console.log(err));
+                utils.envoiMessageDiscord("Error fetch calendar.js " + err);
             })
     } else {
-        /* Au moins un groupe entré est invalide => On génère pas de calendrier, on fait pas de fetch*/
+        res.render('index', {
+            calendarURL: '',
+            listeSelect: listeSelect,
+            calendarURLRedirect: false,
+            toastrNotif: true,
+            toastrObject: {
+                type: 'error',
+                text: 'Un groupe non validé a été rentré',
+                timeout: 5000
+            }
+        });
     }
 });
-
-/*
-    Retourne le bon code du groupe en fonction de la date
-    L'update se fait entre 6h et 6h30 (à affiner)
-    @Arthur Detroux
- */
-function getModifiedParams(params) {
-    const init_date = new Date('September 20, 2019 06:15:00');
-    const one_day = 1000 * 60 * 60 * 24;
-
-    let now = new Date();
-    let diff_ms = now - init_date;
-    let nb_Days = Math.floor(diff_ms / one_day);
-
-    let add_code = nb_Days * 930;
-
-    let tempNumber = Number(params) + add_code;
-
-    return "" + tempNumber;
-}
 
 /*
     On remplit la liste de cours :
@@ -116,17 +79,9 @@ function getModifiedParams(params) {
         - Sinon, on parcours la liste des cours sélectionnés et on les ajoute
  */
 function remplirListeCours(cours1, cours2, cours3) {
-    if (isBloc1) {
-        addCoursToListe(cours1,1);
-    }
-
-    if (isBloc2) {
-        addCoursToListe(cours2,2);
-    }
-
-    if (isBloc3) {
-        addCoursToListe(cours3,3);
-    }
+    if (isBloc1) addCoursToListe(cours1,1);
+    if (isBloc2) addCoursToListe(cours2,2);
+    if (isBloc3) addCoursToListe(cours3,3);
 }
 
 /*

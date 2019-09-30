@@ -9,6 +9,11 @@ const indexRouter = require('./routes/index');
 const calendarRouter = require('./routes/calendar');
 const helpRouter = require('./routes/help');
 const portServerWeb = require('./settings.json').portServerWeb;
+const utils = require('./utils.js');
+const cron = require('node-cron');
+
+// Update des codes pour les requêtes tous les matins à 6h01
+cron.schedule('1 6 * * *', utils.majCodes);
 
 const app = express();
 
