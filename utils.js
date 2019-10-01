@@ -2,6 +2,7 @@ const credentials = require('./credentials.json');
 const fetch = require("node-fetch");
 const blocs = require('./blocs.json');
 const fs = require('fs');
+const _ = require('lodash');
 
 module.exports = {
     envoiMessageDiscord: (message, isErr = true) =>{
@@ -33,13 +34,19 @@ module.exports = {
         rechercheCodes
             .then(res => {
                 const data = JSON.stringify(res);
-                fs.writeFile('classes.json', data, 'utf8', (err) =>{
-                    if(err) throw module.exports.envoiMessageDiscord("Error when writing codes " + err);
-                    module.exports.envoiMessageDiscord("Codes updated", false);
+                fs.readFile('classes.json', (err, readRes) => {
+                    if (err) throw module.exports.envoiMessageDiscord("Error when reading codes " + err);
+                    let actualCodes = JSON.parse(readRes);
+                    if(!_.isEqual(data, JSON.stringify(actualCodes))){
+                        fs.writeFile('classes.json', data, 'utf8', (err) =>{
+                            if(err) throw module.exports.envoiMessageDiscord("Error when writing codes " + err);
+                            module.exports.envoiMessageDiscord("Codes updated", false);
+                        });
+                    }
                 });
             })
             .catch(err => {
-                module.exports.envoiMessageDiscord("Error when updating codes " + err);
+                module.exports.envoiMessageDiscord("Error when searching codes " + err);
             })
     },
 
@@ -91,7 +98,6 @@ const rechercheCodes = new Promise(async function(resolve, reject) {
                 "authorization": `Bearer ${credentials.bearerPortail}`
             }
         });
-
         let resBlocIDFormatted = await resBlocID.json();
         let blocsID = resBlocIDFormatted.data.map(item => item.id);
         for (let blocID of blocsID) {

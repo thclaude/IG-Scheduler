@@ -21,9 +21,6 @@ npm run start
 
 * Stock en local des blocs + A.A. + code dans le fichier `blocs.json`
     - Possible de parse le site ([lien](https://services.henallux.be/paysage/public/cursus/infocursus/idCursus/6)) mais perte de temps(?) et risque de site off, c'est que une fois par année en toute logique donc créer un cron qui effectue cette tâche à la rentrée
-
-* Le code/id des années/groupe s'incrémente de 930 tous les jours. 
-    - Solution temporaire pour contourner ce problème pour le moment.. En attente de la réponse des hautes instances d'Henallux (Kappa)
     
 ## Auteur
 
