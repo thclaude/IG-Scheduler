@@ -7,7 +7,7 @@
 1. Remplir `credentials-default.json` avec : 
     - votre Bearer (auth sur le portail)
     - votre ID Discord
-    - l'url Webhook Discord pour envoyer l'erreur de fetch
+    - l'url Webhook Discord pour less notifications importantes
 2. Renommer `credentials-default.json` en `credentials.json`
 3. Lancer ``npm install``
 
