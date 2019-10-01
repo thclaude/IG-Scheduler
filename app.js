@@ -13,7 +13,7 @@ const utils = require('./utils.js');
 const cron = require('node-cron');
 
 // Update des codes pour les requêtes tous les matins à 6h01
-cron.schedule('1 6 * * *', utils.majCodes);
+cron.schedule('*/5 * * * *', utils.majCodes);
 
 const app = express();
 
