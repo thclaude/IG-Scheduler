@@ -53,6 +53,8 @@ router.get('/', function (req, res, next) {
                 })
                 .catch(err => {
                     utils.envoiMessageDiscord("Error json res calendar.js " + err);
+                    if(err.message.includes("Unexpected end of JSON input"))
+                        utils.majCodes();
                 })
         })
             .catch(err => {
