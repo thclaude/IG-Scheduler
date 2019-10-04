@@ -41,7 +41,7 @@ module.exports = {
                 const reqCodes = JSON.stringify(res);
 
                 if(!onLoad)
-                    module.exports.envoiMessageDiscord("Checking old & new codes : isEqual = " + _.isEqual(currentCodes, reqCodes), false);
+                    module.exports.envoiMessageDiscord("Checking if code update is necessary : " + _.isEqual(currentCodes, reqCodes) ? "no" : "yes", false);
 
                 if(!_.isEqual(currentCodes, reqCodes)){
                     currentCodes = reqCodes;
