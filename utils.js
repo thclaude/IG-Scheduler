@@ -92,7 +92,7 @@ module.exports = {
     },
 
     getCurrentCodes: () => {
-        return currentCodes;
+        return JSON.parse(currentCodes);
     }
 };
 
