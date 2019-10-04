@@ -3,11 +3,16 @@ const fetch = require("node-fetch");
 const blocs = require('./blocs.json');
 const fs = require('fs');
 const _ = require('lodash');
+let currentCodes;
 
 module.exports = {
+    load: () => {
+        module.exports.majCodes(true);
+    },
+
     envoiMessageDiscord: (message, isErr = true) =>{
         const discordMessage = {
-            content: `<@${credentials.idDiscord}>`,
+            content: isErr ? `<@${credentials.idDiscord}>` : "",
             avatar_url: "https://portail.henallux.be/favicon-96x96.png",
             username: "IESNScheduler",
             title: isErr ? "Error" : "Information",
@@ -16,7 +21,7 @@ module.exports = {
                 color: isErr ? 16723200 : 51980,
                 fields: [
                     {
-                        name: "Messsage",
+                        name: "Message",
                         value: message
                     }
                 ]
@@ -30,20 +35,18 @@ module.exports = {
         }).catch(err => console.log(err));
     },
 
-    majCodes: () => {
+    majCodes: (onLoad = false) => {
         rechercheCodes
             .then(res => {
-                const data = JSON.stringify(res);
-                fs.readFile('classes.json', (err, readRes) => {
-                    if (err) throw module.exports.envoiMessageDiscord("Error when reading codes " + err);
-                    let actualCodes = JSON.parse(readRes);
-                    if(!_.isEqual(data, JSON.stringify(actualCodes))){
-                        fs.writeFile('classes.json', data, 'utf8', (err) =>{
-                            if(err) throw module.exports.envoiMessageDiscord("Error when writing codes " + err);
-                            module.exports.envoiMessageDiscord("Codes updated", false);
-                        });
-                    }
-                });
+                const reqCodes = JSON.stringify(res);
+
+                if(!onLoad)
+                    module.exports.envoiMessageDiscord("Checking old & new codes : isEqual = " + _.isEqual(currentCodes, reqCodes), false);
+
+                if(!_.isEqual(currentCodes, reqCodes)){
+                    currentCodes = reqCodes;
+                    module.exports.envoiMessageDiscord(onLoad ? "Codes added to cache" : "Codes updated", false);
+                }
             })
             .catch(err => {
                 module.exports.envoiMessageDiscord("Error when searching codes " + err);
@@ -86,6 +89,10 @@ module.exports = {
         paramCrsFull += (paramCrs3 && paramCrs3.length > 0) ? '&' + paramCrs3 : '';
 
         return paramCrsFull
+    },
+
+    getCurrentCodes: () => {
+        return currentCodes;
     }
 };
 

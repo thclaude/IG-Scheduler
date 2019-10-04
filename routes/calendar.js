@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const utils = require('../utils.js');
-const classes = require('../classes.json');
 const blocs = require('../blocs.json');
 const credentials = require('../credentials.json');
 const fetch = require("node-fetch");
@@ -11,6 +10,7 @@ const datePattern = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const grpDataIntelligence = require('../settings.json').groupeDataIntelligence;
 const listeSelect = utils.getListeSelect();
 
+let classes;
 let listeCours; /* Contiendra la liste des cours que l'utilisateur veut suivre */
 let jsonCours; /* Contiendra la réponse de l'API Horaire clean des cours inutiles/non suivis */
 let coursCommuns; /* Contiendra les cours communs / déjà rencontrés pour ne pas avoir de doublons dans l'horaire */
@@ -19,10 +19,10 @@ let isBloc2; // L'utilisateur est du bloc 2
 let isBloc3; // L'utilisateur est du bloc 3
 
 router.get('/', function (req, res, next) {
+    classes = utils.getCurrentCodes();
     coursCommuns = new Set();
     listeCours = [];
     let calendar = ical({name: "Cours", timezone: "Europe/Brussels"});
-
     if (req.query.grp.every(groupe => Object.keys(classes).includes(groupe))) { /* Check que les groupes existent bien dans le fichier JSON */
 
         determinerBlocs(req.query.grp);

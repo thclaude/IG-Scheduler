@@ -14,6 +14,7 @@ const cron = require('node-cron');
 
 // Update des codes pour les requêtes toutes les 1/2 heure
 cron.schedule('*/30 * * * *', utils.majCodes);
+utils.load();
 
 const app = express();
 
