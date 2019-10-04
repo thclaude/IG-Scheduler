@@ -1,8 +1,8 @@
 const credentials = require('./credentials.json');
 const fetch = require("node-fetch");
 const blocs = require('./blocs.json');
-const fs = require('fs');
 const _ = require('lodash');
+
 let currentCodes;
 
 module.exports = {
