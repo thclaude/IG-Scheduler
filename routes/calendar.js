@@ -31,9 +31,7 @@ router.get('/', function (req, res, next) {
         let fetchURLParams = `[${req.query.grp.map(groupe => `%22${classes[groupe]}%22`).join(', ')}]`; /* Mets au bon format les groupes avant la requête */
         fetch(`https://portail.henallux.be/api/plannings/promotion/${fetchURLParams}`, {
             "method": "GET",
-            "headers": {
-                "authorization": `Bearer ${credentials.bearerPortail}`
-            }
+            "headers": utils.getHeaders()
         }).then(response => {
             response.json()
                 .then(resFormatted => {

@@ -93,6 +93,14 @@ module.exports = {
 
     getCurrentCodes: () => {
         return JSON.parse(currentCodes);
+    },
+
+    getHeaders: () => {
+        return {
+            "authorization": `Bearer ${credentials.bearerPortail}`,
+            "cache-control": "no-store",
+            "pragma": "no-cache"
+        }
     }
 };
 
@@ -101,18 +109,14 @@ const rechercheCodes = new Promise(async function(resolve, reject) {
     try{
         let resBlocID = await fetch(`https://portail.henallux.be/api/classes/orientation_and_implantation/6/1`, {
             "method": "GET",
-            "headers": {
-                "authorization": `Bearer ${credentials.bearerPortail}`
-            }
+            "headers": module.exports.getHeaders()
         });
         let resBlocIDFormatted = await resBlocID.json();
         let blocsID = resBlocIDFormatted.data.map(item => item.id);
         for (let blocID of blocsID) {
             let resGroupID = await fetch(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${blocID}/6/1`, {
                 "method": "GET",
-                "headers": {
-                    "authorization": `Bearer ${credentials.bearerPortail}`
-                }
+                "headers": module.exports.getHeaders()
             });
             let resGroupIDFormatted = await resGroupID.json();
             let groupes = resGroupIDFormatted.data.filter(grp => grp.classe);
