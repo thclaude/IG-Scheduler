@@ -38,10 +38,11 @@ module.exports = {
     majCodes: (onLoad = false) => {
         rechercheCodes
             .then(res => {
-                const reqCodes = JSON.stringify(res);
+                let reqCodes = JSON.stringify(res);
 
-                if(!onLoad)
-                    module.exports.envoiMessageDiscord("Checking if code update is necessary : " + (_.isEqual(currentCodes, reqCodes) ? "no" : "yes"), false);
+                if(!onLoad){
+                    module.exports.envoiMessageDiscord("Checking if code update is necessary : " + (_.isEqual(currentCodes, reqCodes) ? "no" : "yes") + `\n**Req :** ${reqCodes}\n**Cache :** ${JSON.stringify(currentCodes)}`, false);
+                }
 
                 if(!_.isEqual(currentCodes, reqCodes)){
                     currentCodes = reqCodes;
@@ -96,7 +97,7 @@ module.exports = {
     }
 };
 
-const rechercheCodes = new Promise(async function(resolve, reject) {
+let rechercheCodes = new Promise(async function(resolve, reject) {
     let jsonUpdated = {};
     try{
         let resBlocID = await fetch(`https://portail.henallux.be/api/classes/orientation_and_implantation/6/1`, {
