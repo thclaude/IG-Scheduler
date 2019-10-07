@@ -100,7 +100,8 @@ module.exports = {
         return {
             "authorization": `Bearer ${credentials.bearerPortail}`,
             "cache-control": "no-store",
-            "pragma": "no-cache"
+            "pragma": "no-cache",
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
         }
     }
 };
@@ -110,7 +111,8 @@ let rechercheCodes = new Promise(async function(resolve, reject) {
     try{
         let resBlocID = await fetch(`https://portail.henallux.be/api/classes/orientation_and_implantation/6/1`, {
             "method": "GET",
-            "headers": module.exports.getHeaders()
+            "headers": module.exports.getHeaders(),
+            "timeout": 1000
         });
         let resBlocIDFormatted = await resBlocID.json();
         let blocsID = resBlocIDFormatted.data.map(item => item.id);
