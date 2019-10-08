@@ -15,10 +15,10 @@ let currentCodes;
 
 module.exports = {
     load: () => {
-        module.exports.majCodes(true);
+        module.exports.updateClassesCodes(true);
     },
 
-    envoiMessageDiscord: (message, isErr = true) =>{
+    sendDiscordMessage: (message, isErr = true) =>{
         const discordMessage = {
             content: isErr ? `<@${credentials.idDiscord}>` : "",
             avatar_url: "https://portail.henallux.be/favicon-96x96.png",
@@ -43,50 +43,50 @@ module.exports = {
         });
     },
 
-    majCodes: (onLoad = false) => {
+    updateClassesCodes: (onLoad = false) => {
         rechercheCodes
             .then(res => {
                 let reqCodes = JSON.stringify(res);
 
                 if(!onLoad){
-                    module.exports.envoiMessageDiscord("Checking if code update is necessary : " + (_.isEqual(currentCodes, reqCodes) ? "no" : "yes") + `\n**Req :** ${reqCodes}\n**Cache :** ${JSON.stringify(currentCodes)}`, false);
+                    module.exports.sendDiscordMessage("Checking if code update is necessary : " + (_.isEqual(currentCodes, reqCodes) ? "no" : "yes") + `\n**Req :** ${reqCodes}\n**Cache :** ${JSON.stringify(currentCodes)}`, false);
                 }
 
                 if(!_.isEqual(currentCodes, reqCodes)){
                     currentCodes = reqCodes;
-                    module.exports.envoiMessageDiscord(onLoad ? "Codes added to cache" : "Codes updated", false);
+                    module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
                 }
             })
             .catch(err => {
-                module.exports.envoiMessageDiscord("Error when searching codes " + err);
+                module.exports.sendDiscordMessage("Error when searching codes " + err);
             })
     },
 
-    getListeSelect: () => {
-        let listeSelect = {1: [], 2: [], 3: []};
+    getSelectList: () => {
+        let selectList = {1: [], 2: [], 3: []};
         /* Parcours du fichiers "blocs.json" pour préparer une liste qui sera utilisée pour remplir les selectss dans la view index.ejs */
         for (let bloc in blocs) {
-            for (let cours in blocs[bloc]) {
+            for (let courses in blocs[bloc]) {
                 let tempSelect = {
-                    value: blocs[bloc][cours],
-                    text: cours
+                    value: blocs[bloc][courses],
+                    text: courses
                 };
-                listeSelect[bloc].push(tempSelect);
+                selectList[bloc].push(tempSelect);
             }
         }
-        return listeSelect;
+        return selectList;
     },
 
-    getFullParamsCours: (cours) => {
+    getFullParamsCours: (courses) => {
         /*
         Parcours des cours sélectionnés pour la génération des String pour les paramètres URL
             - A revoir ?
         */
-        let tempCrs1 = cours.filter(crs => crs === "1" || (crs >= 100 && crs <= 199));
+        let tempCrs1 = courses.filter(crs => crs === "1" || (crs >= 100 && crs <= 199));
         let paramCrs1 = `${tempCrs1.includes("1") ? 'crs1[]=all' : tempCrs1.map(crs => `crs1[]=${crs}`).join('&')}`;
-        let tempCrs2 = cours.filter(crs => crs === "2" || (crs >= 200 && crs <= 299));
+        let tempCrs2 = courses.filter(crs => crs === "2" || (crs >= 200 && crs <= 299));
         let paramCrs2 = `${tempCrs2.includes("2") ? 'crs2[]=all' : tempCrs2.map(crs => `crs2[]=${crs}`).join('&')}`;
-        let tempCrs3 = cours.filter(crs => crs === "3" || (crs >= 300 && crs <= 399));
+        let tempCrs3 = courses.filter(crs => crs === "3" || (crs >= 300 && crs <= 399));
         let paramCrs3 = `${tempCrs3.includes("3") ? 'crs3[]=all' : tempCrs3.map(crs => `crs3[]=${crs}`).join('&')}`;
 
         /*
@@ -110,19 +110,28 @@ module.exports = {
 };
 
 let rechercheCodes = new Promise(async function(resolve, reject) {
-    let jsonUpdated = {};
+    let updatedJson = {};
     try{
-        let resBlocID = await axiosPortailLog.get('https://portail.henallux.be/api/classes/orientation_and_implantation/6/1');
-        let blocsID = resBlocID.data.data.map(item => item.id);
-        for (let blocID of blocsID) {
-            let resGroupID = await axiosPortailLog.get(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${blocID}/6/1`);
-            let groupes = resGroupID.data.data.filter(grp => grp.classe);
-            for (let groupe of groupes) {
-                let idGroupe = groupe.annee.charAt(0) + groupe.classe;
-                jsonUpdated[idGroupe] = groupe.id;
+        let resBlocsID = await axiosPortailLog.get('https://portail.henallux.be/api/classes/orientation_and_implantation/6/1', {
+            transformResponse: [function (data){
+                let jsonData = JSON.parse(data);
+                return jsonData.data.map(item => item.id)
+            }]
+        });
+
+        for (let bloc of resBlocsID.data) {
+            let resClassesID = await axiosPortailLog.get(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${bloc}/6/1`, {
+                transformResponse: [function (data){
+                    let jsonData = JSON.parse(data);
+                    return jsonData.data.filter(grp => grp.classe);
+                }]
+            });
+            for (let classe of resClassesID.data) {
+                let classeID = classe.annee.charAt(0) + classe.classe;
+                updatedJson[classeID] = classe.id;
             }
         }
-        resolve(jsonUpdated);
+        resolve(updatedJson);
     }catch(e){
         reject(e);
     }

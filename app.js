@@ -8,12 +8,12 @@ const http = require('http');
 const indexRouter = require('./routes/index');
 const calendarRouter = require('./routes/calendar');
 const helpRouter = require('./routes/help');
-const portServerWeb = require('./settings.json').portServerWeb;
+const serverWebPort = require('./settings.json').serverWebPort;
 const utils = require('./utils.js');
 const cron = require('node-cron');
 
 // Update des codes pour les requêtes toutes les 1/2 heure
-cron.schedule('*/15 6-7 * * *', utils.majCodes);
+cron.schedule('*/15 6-7 * * *', utils.updateClassesCodes);
 utils.load();
 
 const app = express();
@@ -51,8 +51,8 @@ app.use(function (err, req, res, next) {
     res.render('error', {errorCode: err.status, toastrNotif: false});
 });
 
-http.createServer(app).listen(portServerWeb, function () {
-    console.log(`Webserver started on port ${portServerWeb}`);
+http.createServer(app).listen(serverWebPort, function () {
+    console.log(`Webserver started on port ${serverWebPort}`);
 });
 
 module.exports = app;
