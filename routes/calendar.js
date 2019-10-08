@@ -2,13 +2,12 @@ const express = require('express');
 const router = express.Router();
 const utils = require('../utils.js');
 const blocs = require('../blocs.json');
-const credentials = require('../credentials.json');
-const fetch = require("node-fetch");
 const ical = require("ical-generator");
 const coursMobileWeb = Array.from(require('../settings.json').coursOptionWeb);
 const datePattern = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const grpDataIntelligence = require('../settings.json').groupeDataIntelligence;
 const listeSelect = utils.getListeSelect();
+const axiosPortailLog = utils.getAxiosPortailLog();
 
 let listeCours; /* Contiendra la liste des cours que l'utilisateur veut suivre */
 let jsonCours; /* Contiendra la réponse de l'API Horaire clean des cours inutiles/non suivis */
@@ -29,34 +28,25 @@ router.get('/', function (req, res, next) {
         remplirListeCours(req.query.crs1, req.query.crs2, req.query.crs3);
 
         let fetchURLParams = `[${req.query.grp.map(groupe => `%22${classes[groupe]}%22`).join(', ')}]`; /* Mets au bon format les groupes avant la requête */
-        fetch(`https://portail.henallux.be/api/plannings/promotion/${fetchURLParams}`, {
-            "method": "GET",
-            "headers": utils.getHeaders()
-        }).then(response => {
-            response.json()
-                .then(resFormatted => {
-                    jsonCours = req.query.grp.includes(grpDataIntelligence) ? resFormatted.filter(cleanCoursData) : resFormatted.filter(cleanCours); /* Si l'option est Data Intelligence, alors on enlève les cours de l'option web par défaut (merci henallux d'avoir bien fait les horaires)*/
-                    for (let cours of jsonCours) {
-                        if (cours.start && cours.end) {
-                            calendar.createEvent({
-                                start: new Date(cours.start.replace(datePattern, "$1-$2-$3T$4:$5:$6")),
-                                end: new Date(cours.end.replace(datePattern, "$1-$2-$3T$4:$5:$6")),
-                                location: cours.location,
-                                summary: cours.title,
-                                description: cours.details
-                            });
-                        }
+        axiosPortailLog(`https://portail.henallux.be/api/plannings/promotion/${fetchURLParams}`)
+            .then(response => {
+                jsonCours = req.query.grp.includes(grpDataIntelligence) ? response.data.filter(cleanCoursData) : response.data.filter(cleanCours); /* Si l'option est Data Intelligence, alors on enlève les cours de l'option web par défaut (merci henallux d'avoir bien fait les horaires)*/
+                for (let cours of jsonCours) {
+                    if (cours.start && cours.end) {
+                        calendar.createEvent({
+                            start: new Date(cours.start.replace(datePattern, "$1-$2-$3T$4:$5:$6")),
+                            end: new Date(cours.end.replace(datePattern, "$1-$2-$3T$4:$5:$6")),
+                            location: cours.location,
+                            summary: cours.title,
+                            description: cours.details
+                        });
                     }
-                    calendar.serve(res);
-                })
-                .catch(err => {
-                    utils.envoiMessageDiscord("Error json res calendar.js " + err);
-                    if(err.message.includes("Unexpected end of JSON input"))
-                        utils.majCodes();
-                })
-        })
+                }
+                calendar.serve(res);
+            })
             .catch(err => {
                 utils.envoiMessageDiscord("Error fetch calendar.js " + err);
+                utils.majCodes();
             })
     } else {
         res.render('index', {

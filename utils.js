@@ -1,7 +1,15 @@
 const credentials = require('./credentials.json');
-const fetch = require("node-fetch");
+const axios = require('axios');
 const blocs = require('./blocs.json');
 const _ = require('lodash');
+const axiosPortailLog = axios.create({
+    baseURL: 'https://portail.henallux.be/api/',
+    timeout: 2000,
+    headers: {
+        'Authorization': 'Bearer ' + credentials.bearerPortail,
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
+    }
+});
 
 let currentCodes;
 
@@ -28,11 +36,11 @@ module.exports = {
             }]
         };
 
-        fetch(credentials.webhookURL, {
+        axios({
             method: 'post',
-            body: JSON.stringify(discordMessage),
-            headers: { 'Content-Type': 'application/json' },
-        }).catch(err => console.log(err));
+            url: credentials.webhookURL,
+            data: JSON.stringify(discordMessage)
+        });
     },
 
     majCodes: (onLoad = false) => {
@@ -96,33 +104,19 @@ module.exports = {
         return JSON.parse(currentCodes);
     },
 
-    getHeaders: () => {
-        return {
-            "authorization": `Bearer ${credentials.bearerPortail}`,
-            "cache-control": "no-store",
-            "pragma": "no-cache",
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
-        }
+    getAxiosPortailLog: () => {
+        return axiosPortailLog;
     }
 };
 
 let rechercheCodes = new Promise(async function(resolve, reject) {
     let jsonUpdated = {};
     try{
-        let resBlocID = await fetch(`https://portail.henallux.be/api/classes/orientation_and_implantation/6/1`, {
-            "method": "GET",
-            "headers": module.exports.getHeaders(),
-            "timeout": 1000
-        });
-        let resBlocIDFormatted = await resBlocID.json();
-        let blocsID = resBlocIDFormatted.data.map(item => item.id);
+        let resBlocID = await axiosPortailLog.get('https://portail.henallux.be/api/classes/orientation_and_implantation/6/1');
+        let blocsID = resBlocID.data.data.map(item => item.id);
         for (let blocID of blocsID) {
-            let resGroupID = await fetch(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${blocID}/6/1`, {
-                "method": "GET",
-                "headers": module.exports.getHeaders()
-            });
-            let resGroupIDFormatted = await resGroupID.json();
-            let groupes = resGroupIDFormatted.data.filter(grp => grp.classe);
+            let resGroupID = await axiosPortailLog.get(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${blocID}/6/1`);
+            let groupes = resGroupID.data.data.filter(grp => grp.classe);
             for (let groupe of groupes) {
                 let idGroupe = groupe.annee.charAt(0) + groupe.classe;
                 jsonUpdated[idGroupe] = groupe.id;
