@@ -44,7 +44,7 @@ module.exports = {
     },
 
     updateClassesCodes: (onLoad = false) => {
-        rechercheCodes
+        rechercheCodes()
             .then(res => {
                 let reqCodes = JSON.stringify(res);
 
@@ -109,30 +109,32 @@ module.exports = {
     }
 };
 
-let rechercheCodes = new Promise(async function(resolve, reject) {
-    let updatedJson = {};
-    try{
-        let resBlocsID = await axiosPortailLog.get('https://portail.henallux.be/api/classes/orientation_and_implantation/6/1', {
-            transformResponse: [function (data){
-                let jsonData = JSON.parse(data);
-                return jsonData.data.map(item => item.id)
-            }]
-        });
-
-        for (let bloc of resBlocsID.data) {
-            let resClassesID = await axiosPortailLog.get(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${bloc}/6/1`, {
-                transformResponse: [function (data){
+function rechercheCodes() {
+    return new Promise(async (resolve, reject) => {
+        let updatedJson = {};
+        try {
+            let resBlocsID = await axiosPortailLog.get('https://portail.henallux.be/api/classes/orientation_and_implantation/6/1', {
+                transformResponse: [function (data) {
                     let jsonData = JSON.parse(data);
-                    return jsonData.data.filter(grp => grp.classe);
+                    return jsonData.data.map(item => item.id)
                 }]
             });
-            for (let classe of resClassesID.data) {
-                let classeID = classe.annee.charAt(0) + classe.classe;
-                updatedJson[classeID] = classe.id;
+
+            for (let bloc of resBlocsID.data) {
+                let resClassesID = await axiosPortailLog.get(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${bloc}/6/1`, {
+                    transformResponse: [function (data) {
+                        let jsonData = JSON.parse(data);
+                        return jsonData.data.filter(grp => grp.classe);
+                    }]
+                });
+                for (let classe of resClassesID.data) {
+                    let classeID = classe.annee.charAt(0) + classe.classe;
+                    updatedJson[classeID] = classe.id;
+                }
             }
+            resolve(updatedJson);
+        } catch (e) {
+            reject(e);
         }
-        resolve(updatedJson);
-    }catch(e){
-        reject(e);
-    }
-});
+    })
+}
