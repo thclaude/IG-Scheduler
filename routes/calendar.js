@@ -1,69 +1,60 @@
 const express = require('express');
 const router = express.Router();
 const utils = require('../utils.js');
-const classes = require('../classes.json');
 const blocs = require('../blocs.json');
-const credentials = require('../credentials.json');
-const fetch = require("node-fetch");
 const ical = require("ical-generator");
-const coursMobileWeb = Array.from(require('../settings.json').coursOptionWeb);
-const datePattern = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
-const grpDataIntelligence = require('../settings.json').groupeDataIntelligence;
-const listeSelect = utils.getListeSelect();
+const mobileWebCourses = Array.from(require('../settings.json').webOptionCourses);
+const patternDate = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
+const dataIntelligenceGroupe = require('../settings.json').dataIntelligenceClasse;
+const selectList = utils.getSelectList();
+const axiosPortailLog = utils.getAxiosPortailLog();
 
-let listeCours; /* Contiendra la liste des cours que l'utilisateur veut suivre */
-let jsonCours; /* Contiendra la réponse de l'API Horaire clean des cours inutiles/non suivis */
-let coursCommuns; /* Contiendra les cours communs / déjà rencontrés pour ne pas avoir de doublons dans l'horaire */
+let courses; /* Contiendra la liste des cours que l'utilisateur veut suivre */
+let coreCourses; /* Contiendra les cours communs / déjà rencontrés pour ne pas avoir de doublons dans l'horaire */
 let isBloc1; // L'utilisateur est du bloc 1
 let isBloc2; // L'utilisateur est du bloc 2
 let isBloc3; // L'utilisateur est du bloc 3
 
 router.get('/', function (req, res, next) {
-    coursCommuns = new Set();
-    listeCours = [];
+    coreCourses = new Set();
+    courses = [];
+    let classesCodes = utils.getCurrentCodes();
     let calendar = ical({name: "Cours", timezone: "Europe/Brussels"});
 
-    if (req.query.grp.every(groupe => Object.keys(classes).includes(groupe))) { /* Check que les groupes existent bien dans le fichier JSON */
+    if (req.query.grp.every(group => Object.keys(classesCodes).includes(group))) { /* Check que les groupes existent bien dans le fichier JSON */
 
-        determinerBlocs(req.query.grp);
-        remplirListeCours(req.query.crs1, req.query.crs2, req.query.crs3);
+        blocsDetermine(req.query.grp);
+        fillCourses(req.query.crs1, req.query.crs2, req.query.crs3);
 
-        let fetchURLParams = `[${req.query.grp.map(groupe => `%22${classes[groupe]}%22`).join(', ')}]`; /* Mets au bon format les groupes avant la requête */
-        fetch(`https://portail.henallux.be/api/plannings/promotion/${fetchURLParams}`, {
-            "method": "GET",
-            "headers": {
-                "authorization": `Bearer ${credentials.bearerPortail}`
-            }
-        }).then(response => {
-            response.json()
-                .then(resFormatted => {
-                    jsonCours = req.query.grp.includes(grpDataIntelligence) ? resFormatted.filter(cleanCoursData) : resFormatted.filter(cleanCours); /* Si l'option est Data Intelligence, alors on enlève les cours de l'option web par défaut (merci henallux d'avoir bien fait les horaires)*/
-                    for (let cours of jsonCours) {
-                        if (cours.start && cours.end) {
-                            calendar.createEvent({
-                                start: new Date(cours.start.replace(datePattern, "$1-$2-$3T$4:$5:$6")),
-                                end: new Date(cours.end.replace(datePattern, "$1-$2-$3T$4:$5:$6")),
-                                location: cours.location,
-                                summary: cours.title,
-                                description: cours.details
-                            });
-                        }
-                    }
-                    calendar.serve(res);
-                })
-                .catch(err => {
-                    utils.envoiMessageDiscord("Error json res calendar.js " + err);
-                    if(err.message.includes("Unexpected end of JSON input"))
-                        utils.majCodes();
-                })
+        let fetchURLParams = `[${req.query.grp.map(group => `%22${classesCodes[group]}%22`).join(', ')}]`; /* Mets au bon format les groupes avant la requête */
+        axiosPortailLog.get(`https://portail.henallux.be/api/plannings/promotion/${fetchURLParams}`, {
+            transformResponse: [function (data){
+                let jsonData = JSON.parse(data);
+                return req.query.grp.includes(dataIntelligenceGroupe) ? jsonData.filter(cleanCoursesDataOption) : jsonData.filter(cleanCourses) /* Si l'option est Data Intelligence, alors on enlève les cours de l'option web par défaut (merci henallux d'avoir bien fait les horaires)*/
+            }]
         })
+            .then(response => {
+                for (let course of response.data) {
+                    if (course.start && course.end) {
+                        calendar.createEvent({
+                            start: new Date(course.start.replace(patternDate, "$1-$2-$3T$4:$5:$6")),
+                            end: new Date(course.end.replace(patternDate, "$1-$2-$3T$4:$5:$6")),
+                            location: course.location,
+                            summary: course.title,
+                            description: course.details
+                        });
+                    }
+                }
+                calendar.serve(res);
+            })
             .catch(err => {
-                utils.envoiMessageDiscord("Error fetch calendar.js " + err);
+                utils.sendDiscordMessage("Error fetch calendar.js " + err);
+                utils.updateClassesCodes();
             })
     } else {
         res.render('index', {
             calendarURL: '',
-            listeSelect: listeSelect,
+            selectList: selectList,
             calendarURLRedirect: false,
             toastrNotif: true,
             toastrObject: {
@@ -80,10 +71,10 @@ router.get('/', function (req, res, next) {
         - S'il est dans un bloc, on check si les cours si il a choisi des cours ou qu'il y a all => On ajoute tout
         - Sinon, on parcours la liste des cours sélectionnés et on les ajoute
  */
-function remplirListeCours(cours1, cours2, cours3) {
-    if (isBloc1) addCoursToListe(cours1,1);
-    if (isBloc2) addCoursToListe(cours2,2);
-    if (isBloc3) addCoursToListe(cours3,3);
+function fillCourses(course1, course2, course3) {
+    if (isBloc1) addCourse(course1,1);
+    if (isBloc2) addCourse(course2,2);
+    if (isBloc3) addCourse(course3,3);
 }
 
 /*
@@ -92,36 +83,36 @@ function remplirListeCours(cours1, cours2, cours3) {
     Amélioration :
         - Mettre direct le JSON dans le Set ? Possible/utile ? Enlèverai automatiquement les doublons
  */
-function cleanCours(cours) {
-    let transformedString = `${cours.start}/${cours.end}/${cours.location}/${cours.title}/${cours.details}`; // On crée une chaîne uniquement
-    let crsCommun = coursCommuns.has(transformedString); // On regarde si notre Set a déjà cette chaine (=> cours qui a déjà été mis dans le calendrier)
-    if (!crsCommun) {
-        coursCommuns.add(transformedString);
+function cleanCourses(course) {
+    let transformedString = `${course.start}/${course.end}/${course.location}/${course.title}/${course.details}`; // On crée une chaîne uniquement
+    let coreCourse = coreCourses.has(transformedString); // On regarde si notre Set a déjà cette chaine (=> cours qui a déjà été mis dans le calendrier)
+    if (!coreCourse) {
+        coreCourses.add(transformedString);
     }
-    let code = cours.text.substring(0, 5); // On chope l'ID du cours
-    return (listeCours.some(c => code === c) || code.substring(0, 2).toUpperCase() !== 'IG') && !crsCommun; // On check si le cours est dans la liste de cours choisis (OU si il ne commence pas par un code, ex Team Building) et que ce n'est pas un cours commun (déjà ajouté)
+    let codeCourse = course.text.substring(0, 5); // On chope l'ID du cours
+    return (courses.some(c => codeCourse === c) || codeCourse.substring(0, 2).toUpperCase() !== 'IG') && !coreCourse; // On check si le cours est dans la liste de cours choisis (OU si il ne commence pas par un code, ex Team Building) et que ce n'est pas un cours commun (déjà ajouté)
 }
 
 /* Enlève les cours de l'option Web dans l'horaire des Data*/
-function cleanCoursData(cours) {
-    let code = cours.text.substring(0, 5);
-    return cleanCours(cours) && !coursMobileWeb.includes(code);
+function cleanCoursesDataOption(course) {
+    let codeCourse = course.text.substring(0, 5);
+    return cleanCourses(course) && !mobileWebCourses.includes(codeCourse);
 }
 
-function determinerBlocs(groupes){
-    isBloc1 = groupes.some(groupe => groupe.substring(0, 1) === '1');
-    isBloc2 = groupes.some(groupe => groupe.substring(0, 1) === '2');
-    isBloc3 = groupes.some(groupe => groupe.substring(0, 1) === '3');
+function blocsDetermine(classes){
+    isBloc1 = classes.some(classe => classe.substring(0, 1) === '1');
+    isBloc2 = classes.some(classe => classe.substring(0, 1) === '2');
+    isBloc3 = classes.some(classe => classe.substring(0, 1) === '3');
 }
 
-function addCoursToListe(coursParams, numBloc){
-    if (!coursParams || coursParams.includes("all")) {
-        for (bloc of Object.values(blocs[numBloc])) {
-            listeCours.push("IG" + bloc);
+function addCourse(courseParams, blocNum){
+    if (!courseParams || courseParams.includes("all")) {
+        for (let bloc of Object.values(blocs[blocNum])) {
+            courses.push("IG" + bloc);
         }
     } else {
-        coursParams.forEach(cours => {
-            listeCours.push("IG" + cours);
+        courseParams.forEach(course => {
+            courses.push("IG" + course);
         })
     }
 }

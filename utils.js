@@ -1,13 +1,26 @@
 const credentials = require('./credentials.json');
-const fetch = require("node-fetch");
+const axios = require('axios');
 const blocs = require('./blocs.json');
-const fs = require('fs');
 const _ = require('lodash');
+const axiosPortailLog = axios.create({
+    baseURL: 'https://portail.henallux.be/api/',
+    timeout: 2000,
+    headers: {
+        'Authorization': 'Bearer ' + credentials.bearerPortail,
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
+    }
+});
+
+let currentCodes;
 
 module.exports = {
-    envoiMessageDiscord: (message, isErr = true) =>{
+    load: () => {
+        module.exports.updateClassesCodes(true);
+    },
+
+    sendDiscordMessage: (message, isErr = true) =>{
         const discordMessage = {
-            content: `<@${credentials.idDiscord}>`,
+            content: isErr ? `<@${credentials.idDiscord}>` : "",
             avatar_url: "https://portail.henallux.be/favicon-96x96.png",
             username: "IESNScheduler",
             title: isErr ? "Error" : "Information",
@@ -16,65 +29,60 @@ module.exports = {
                 color: isErr ? 16723200 : 51980,
                 fields: [
                     {
-                        name: "Messsage",
+                        name: "Message",
                         value: message
                     }
                 ]
             }]
         };
 
-        fetch(credentials.webhookURL, {
+        axios({
             method: 'post',
-            body: JSON.stringify(discordMessage),
-            headers: { 'Content-Type': 'application/json' },
-        }).catch(err => console.log(err));
+            url: credentials.webhookURL,
+            data: JSON.stringify(discordMessage)
+        });
     },
 
-    majCodes: () => {
-        rechercheCodes
+    updateClassesCodes: (onLoad = false) => {
+        searchClassesCodes()
             .then(res => {
-                const data = JSON.stringify(res);
-                fs.readFile('classes.json', (err, readRes) => {
-                    if (err) throw module.exports.envoiMessageDiscord("Error when reading codes " + err);
-                    let actualCodes = JSON.parse(readRes);
-                    if(!_.isEqual(data, JSON.stringify(actualCodes))){
-                        fs.writeFile('classes.json', data, 'utf8', (err) =>{
-                            if(err) throw module.exports.envoiMessageDiscord("Error when writing codes " + err);
-                            module.exports.envoiMessageDiscord("Codes updated", false);
-                        });
-                    }
-                });
+                let reqCodes = JSON.stringify(res);
+
+                if(!_.isEqual(currentCodes, reqCodes)){
+                    currentCodes = reqCodes;
+                    module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
+                }
             })
             .catch(err => {
-                module.exports.envoiMessageDiscord("Error when searching codes " + err);
+                module.exports.sendDiscordMessage("Error when searching codes " + err);
             })
     },
 
-    getListeSelect: () => {
-        let listeSelect = {1: [], 2: [], 3: []};
+    getSelectList: () => {
+        let selectList = {1: [], 2: [], 3: []};
         /* Parcours du fichiers "blocs.json" pour préparer une liste qui sera utilisée pour remplir les selectss dans la view index.ejs */
         for (let bloc in blocs) {
-            for (let cours in blocs[bloc]) {
+            for (let courses in blocs[bloc]) {
                 let tempSelect = {
-                    value: blocs[bloc][cours],
-                    text: cours
+                    value: blocs[bloc][courses],
+                    text: courses
                 };
-                listeSelect[bloc].push(tempSelect);
+                selectList[bloc].push(tempSelect);
             }
         }
-        return listeSelect;
+        return selectList;
     },
 
-    getFullParamsCours: (cours) => {
+    getFullParamsCours: (courses) => {
         /*
         Parcours des cours sélectionnés pour la génération des String pour les paramètres URL
             - A revoir ?
         */
-        let tempCrs1 = cours.filter(crs => crs === "1" || (crs >= 100 && crs <= 199));
+        let tempCrs1 = courses.filter(crs => crs === "1" || (crs >= 100 && crs <= 199));
         let paramCrs1 = `${tempCrs1.includes("1") ? 'crs1[]=all' : tempCrs1.map(crs => `crs1[]=${crs}`).join('&')}`;
-        let tempCrs2 = cours.filter(crs => crs === "2" || (crs >= 200 && crs <= 299));
+        let tempCrs2 = courses.filter(crs => crs === "2" || (crs >= 200 && crs <= 299));
         let paramCrs2 = `${tempCrs2.includes("2") ? 'crs2[]=all' : tempCrs2.map(crs => `crs2[]=${crs}`).join('&')}`;
-        let tempCrs3 = cours.filter(crs => crs === "3" || (crs >= 300 && crs <= 399));
+        let tempCrs3 = courses.filter(crs => crs === "3" || (crs >= 300 && crs <= 399));
         let paramCrs3 = `${tempCrs3.includes("3") ? 'crs3[]=all' : tempCrs3.map(crs => `crs3[]=${crs}`).join('&')}`;
 
         /*
@@ -86,36 +94,43 @@ module.exports = {
         paramCrsFull += (paramCrs3 && paramCrs3.length > 0) ? '&' + paramCrs3 : '';
 
         return paramCrsFull
+    },
+
+    getCurrentCodes: () => {
+        return JSON.parse(currentCodes);
+    },
+
+    getAxiosPortailLog: () => {
+        return axiosPortailLog;
     }
 };
 
-const rechercheCodes = new Promise(async function(resolve, reject) {
-    let jsonUpdated = {};
-    try{
-        let resBlocID = await fetch(`https://portail.henallux.be/api/classes/orientation_and_implantation/6/1`, {
-            "method": "GET",
-            "headers": {
-                "authorization": `Bearer ${credentials.bearerPortail}`
-            }
-        });
-        let resBlocIDFormatted = await resBlocID.json();
-        let blocsID = resBlocIDFormatted.data.map(item => item.id);
-        for (let blocID of blocsID) {
-            let resGroupID = await fetch(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${blocID}/6/1`, {
-                "method": "GET",
-                "headers": {
-                    "authorization": `Bearer ${credentials.bearerPortail}`
-                }
+function searchClassesCodes() {
+    return new Promise(async (resolve, reject) => {
+        let updatedJson = {};
+        try {
+            let resBlocsID = await axiosPortailLog.get('https://portail.henallux.be/api/classes/orientation_and_implantation/6/1', {
+                transformResponse: [function (data) {
+                    let jsonData = JSON.parse(data);
+                    return jsonData.data.map(item => item.id)
+                }]
             });
-            let resGroupIDFormatted = await resGroupID.json();
-            let groupes = resGroupIDFormatted.data.filter(grp => grp.classe);
-            for (let groupe of groupes) {
-                let idGroupe = groupe.annee.charAt(0) + groupe.classe;
-                jsonUpdated[idGroupe] = groupe.id;
+
+            for (let bloc of resBlocsID.data) {
+                let resClassesID = await axiosPortailLog.get(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${bloc}/6/1`, {
+                    transformResponse: [function (data) {
+                        let jsonData = JSON.parse(data);
+                        return jsonData.data.filter(grp => grp.classe);
+                    }]
+                });
+                for (let classe of resClassesID.data) {
+                    let classeID = classe.annee.charAt(0) + classe.classe;
+                    updatedJson[classeID] = classe.id;
+                }
             }
+            resolve(updatedJson);
+        } catch (e) {
+            reject(e);
         }
-        resolve(jsonUpdated);
-    }catch(e){
-        reject(e);
-    }
-});
+    })
+}
