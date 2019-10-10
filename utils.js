@@ -44,13 +44,9 @@ module.exports = {
     },
 
     updateClassesCodes: (onLoad = false) => {
-        rechercheCodes()
+        searchClassesCodes()
             .then(res => {
                 let reqCodes = JSON.stringify(res);
-
-                if(!onLoad){
-                    module.exports.sendDiscordMessage("Checking if code update is necessary : " + (_.isEqual(currentCodes, reqCodes) ? "no" : "yes") + `\n**Req :** ${reqCodes}\n**Cache :** ${JSON.stringify(currentCodes)}`, false);
-                }
 
                 if(!_.isEqual(currentCodes, reqCodes)){
                     currentCodes = reqCodes;
@@ -109,7 +105,7 @@ module.exports = {
     }
 };
 
-function rechercheCodes() {
+function searchClassesCodes() {
     return new Promise(async (resolve, reject) => {
         let updatedJson = {};
         try {

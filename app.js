@@ -12,8 +12,8 @@ const serverWebPort = require('./settings.json').serverWebPort;
 const utils = require('./utils.js');
 const cron = require('node-cron');
 
-// Update des codes pour les requêtes toutes les 1/2 heure
-cron.schedule('*/15 6-7 * * *', utils.updateClassesCodes);
+// Update des codes pour les requêtes toutes les 5minutes entre 6h et 6h30
+cron.schedule('0-30/5 6 * * *', utils.updateClassesCodes);
 utils.load();
 
 const app = express();
