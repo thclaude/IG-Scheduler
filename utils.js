@@ -4,7 +4,7 @@ const blocs = require('./blocs.json');
 const _ = require('lodash');
 const axiosPortailLog = axios.create({
     baseURL: 'https://portail.henallux.be/api/',
-    timeout: 2000,
+    timeout: 5000,
     headers: {
         'Authorization': 'Bearer ' + credentials.bearerPortail,
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
