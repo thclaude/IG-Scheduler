@@ -13,7 +13,7 @@ const utils = require('./utils.js');
 const cron = require('node-cron');
 
 // Update des codes pour les requêtes toutes les 5minutes entre 6h et 6h30
-cron.schedule('0-30/5 6 * * *', utils.updateClassesCodes);
+cron.schedule('0-30/1 6 * * *', utils.updateClassesCodes);
 utils.load();
 
 const app = express();
