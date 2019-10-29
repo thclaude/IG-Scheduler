@@ -5,7 +5,11 @@ const blocs = require('../blocs.json');
 const ical = require("ical-generator");
 const mobileWebCourses = Array.from(require('../settings.json').webOptionCourses);
 const patternDate = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
+const patternCourse = /([a-zA-Zé /]+)/
 const dataIntelligenceGroupe = require('../settings.json').dataIntelligenceClasse;
+const languagesCourses = require('../settings.json').languagesCourses;
+const labelALNL = require('../settings.json').labelALNL;
+const labelEN = require('../settings.json').labelENRenfort;
 const selectList = utils.getSelectList();
 const axiosPortailLog = utils.getAxiosPortailLog();
 
@@ -14,10 +18,15 @@ let coreCourses; /* Contiendra les cours communs / déjà rencontrés pour ne pa
 let isBloc1; // L'utilisateur est du bloc 1
 let isBloc2; // L'utilisateur est du bloc 2
 let isBloc3; // L'utilisateur est du bloc 3
+let langOpt2;
+let langOpt3;
 
 router.get('/', function (req, res, next) {
     coreCourses = new Set();
     courses = [];
+    langOpt2 = req.query.optl2;
+    langOpt3 = req.query.optl3;
+
     let classesCodes = utils.getCurrentCodes();
     let calendar = ical({name: "Cours", timezone: "Europe/Brussels"});
 
@@ -90,7 +99,11 @@ function cleanCourses(course) {
         coreCourses.add(transformedString);
     }
     let codeCourse = course.text.substring(0, 5); // On chope l'ID du cours
-    return (courses.some(c => codeCourse === c) || codeCourse.substring(0, 2).toUpperCase() !== 'IG') && !coreCourse; // On check si le cours est dans la liste de cours choisis (OU si il ne commence pas par un code, ex Team Building) et que ce n'est pas un cours commun (déjà ajouté)
+    let languageOption;
+    if(languagesCourses.includes(codeCourse)){
+        languageOption = cleanLanguageCourse(course.text)
+    }
+    return (courses.some(c => codeCourse === c) || codeCourse.substring(0, 2).toUpperCase() !== 'IG') && !coreCourse && !languageOption; // On check si le cours est dans la liste de cours choisis (OU si il ne commence pas par un code, ex Team Building) et que ce n'est pas un cours commun (déjà ajouté)
 }
 
 /* Enlève les cours de l'option Web dans l'horaire des Data*/
@@ -115,6 +128,29 @@ function addCourse(courseParams, blocNum){
             courses.push("IG" + course);
         })
     }
+}
+
+function cleanLanguageCourse(course){
+    let stringMatch = course.substring(6).match(patternCourse)[0];
+    stringMatch = stringMatch.substring(0, --stringMatch.length);
+    let returnValue;
+    if(langOpt2){
+        if(langOpt2.includes('ALNL')){
+            returnValue = labelEN.includes(stringMatch)
+        }else{
+            returnValue = labelALNL.includes(stringMatch)
+        }
+    }
+
+    if(langOpt3){
+        if(langOpt3.includes('ALNL')){
+            returnValue = labelEN.includes(stringMatch)
+        }else{
+            returnValue = labelALNL.includes(stringMatch)
+        }
+    }
+
+    return returnValue;
 }
 
 module.exports = router;
