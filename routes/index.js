@@ -48,8 +48,15 @@ router.post('/', function (req, res, next) {
         } else {
             courses = req.body.Courses;
         }
+        /* Idem mais avec les langues */
+        let languages = [];
+        if (!Array.isArray(req.body.SecondLanguage)) {
+            languages.push(req.body.SecondLanguage);
+        } else {
+            languages = req.body.SecondLanguage;
+        }
 
-        const paramCrsFull = utils.getFullParamsCours(courses);
+        const paramCrsFull = utils.getFullParamsCours(courses, languages);
 
         res.render('index', {
             calendarURL: `${fullURL}calendar?${classes.map(classe => `grp[]=${classe}`).join('&')}${paramCrsFull}`,
