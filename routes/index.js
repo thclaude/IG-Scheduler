@@ -48,11 +48,12 @@ router.post('/', function (req, res, next) {
         } else {
             courses = req.body.Courses;
         }
+
         /* Idem mais avec les langues */
         let languages = [];
-        if(req.body.SecondLanguage2)
+        if(req.body.SecondLanguage2 && classes.map(classe => classe.substring(0, 1)).includes('2'))
             languages.push(req.body.SecondLanguage2);
-        if(req.body.SecondLanguage3)
+        if(req.body.SecondLanguage3 && classes.map(classe => classe.substring(0, 1)).includes('3'))
             languages.push(req.body.SecondLanguage3);
 
         const paramCrsFull = utils.getFullParamsCours(courses, languages);
