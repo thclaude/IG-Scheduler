@@ -35,12 +35,14 @@ module.exports = {
                 ]
             }]
         };
-
         axios({
             method: 'post',
             url: credentials.webhookURL,
-            data: JSON.stringify(discordMessage)
-        });
+            data: JSON.stringify(discordMessage),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
     },
 
     updateClassesCodes: (onLoad = false) => {
