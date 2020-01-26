@@ -22,23 +22,82 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script src="/assets/js/script.min.js"></script>
 <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
-<%if(toastrNotif){%>
-<script>
-    $(function () {
-        toastr["<%= toastrObject.type %>"]("<%= toastrObject.text %>", "IESN Scheduler", {"positionClass": "toast-bottom-right", "progressBar": true, "timeOut": "<%= toastrObject.timeout %>",})
-    });
-</script>
-<%}%>
-<% if (active === "index"){%>
-<script>
-    <% if(calendarURLRedirect){ %>
-    window.onload = function (event) {
-        window.location.hash = "#calendarURL";
-    };
-    <% } %>
+<% if(errorMsg.length > 0){ %>
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "200",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+        toastr.error("<%= errorMsg %>", "Erreur");
+    </script>
+<% } %>
+<% if(successMsg.length > 0){ %>
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "200",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+        toastr.success("<%= successMsg %>", "Succès");
+    </script>
+<% } %>
+<% if(infoMsg.length > 0){ %>
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "200",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+        toastr.info("<%= infoMsg %>", "Information");
+    </script>
+<% } %>
+<% if (active === "index"){ %>
+    <script>
+        <% if(toCalendarURL.length > 0){ %>
+        window.onload = function (event) {
+            window.location.hash = "#calendarURL";
+        };
+        <% } %>
 
-    $(function () {
-        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+        $(function () {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
             $('.selectpicker').selectpicker('mobile');
         }
     });
