@@ -2,6 +2,8 @@ const credentials = require('./credentials.json');
 const axios = require('axios');
 const blocs = require('./blocs.json');
 const _ = require('lodash');
+const path = require('path');
+
 const axiosPortailLog = axios.create({
     baseURL: 'https://portail.henallux.be/api/',
     timeout: 15000,
@@ -42,7 +44,7 @@ module.exports = {
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
+        });
     },
 
     updateClassesCodes: (onLoad = false) => {
@@ -109,6 +111,17 @@ module.exports = {
 
     getAxiosPortailLog: () => {
         return axiosPortailLog;
+    },
+
+    renderTemplate: (res, req, template, data = {}) => {
+        const baseData = {
+            path: req.path,
+            active: template,
+            errorMsg: req.flash('errorToast'),
+            successMsg: req.flash('successToast'),
+            infoMsg: req.flash('infoToast')
+        };
+        res.render(path.resolve(`./views/${template}`), Object.assign(baseData, data));
     }
 };
 

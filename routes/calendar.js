@@ -10,7 +10,6 @@ const dataIntelligenceGroupe = require('../settings.json').dataIntelligenceClass
 const languagesCourses = require('../settings.json').languagesCourses;
 const labelALNL = require('../settings.json').labelALNL;
 const labelEN = require('../settings.json').labelENRenfort;
-const selectList = utils.getSelectList();
 const axiosPortailLog = utils.getAxiosPortailLog();
 
 let courses; /* Contiendra la liste des cours que l'utilisateur veut suivre */
@@ -61,17 +60,8 @@ router.get('/', function (req, res, next) {
                 utils.updateClassesCodes();
             })
     } else {
-        res.render('index', {
-            calendarURL: '',
-            selectList: selectList,
-            calendarURLRedirect: false,
-            toastrNotif: true,
-            toastrObject: {
-                type: 'error',
-                text: 'Un groupe non validé a été rentré',
-                timeout: 5000
-            }
-        });
+        req.flash('errorToast', 'Un groupe non validé a été rentré');
+        res.redirect('/');
     }
 });
 

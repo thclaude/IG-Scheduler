@@ -9,27 +9,18 @@ const selectList = utils.getSelectList();
  */
 
 router.get('/', function (req, res, next) {
-    res.render('index', {
-        calendarURL: '',
+    utils.renderTemplate(res, req, 'index', {
         selectList: selectList,
-        calendarURLRedirect: false,
-        toastrNotif: false
+        title: 'Home',
+        calendarURL: req.flash('calendarURL'),
+        toCalendarURL: req.flash('toCalendarURL')
     });
 });
 
 router.post('/', function (req, res, next) {
     if (!req.body.Classes) { // Aucun groupe sélectionné
-        res.render('index', {
-            calendarURL: '',
-            selectList: selectList,
-            calendarURLRedirect: false,
-            toastrNotif: true,
-            toastrObject: {
-                type: 'error',
-                text: 'Aucun groupe sélectionné',
-                timeout: 5000
-            }
-        });
+        req.flash('errorToast', 'Aucun groupe sélectionné');
+        res.redirect('/');
     } else {
         let fullURL = 'https://iesn.thibaultclaude.be' + req.originalUrl;
 
@@ -51,24 +42,18 @@ router.post('/', function (req, res, next) {
 
         /* Idem mais avec les langues */
         let languages = [];
-        if(req.body.SecondLanguage2 && classes.map(classe => classe.substring(0, 1)).includes('2'))
+        if (req.body.SecondLanguage2 && classes.map(classe => classe.substring(0, 1)).includes('2'))
             languages.push(req.body.SecondLanguage2);
-        if(req.body.SecondLanguage3 && classes.map(classe => classe.substring(0, 1)).includes('3'))
+        if (req.body.SecondLanguage3 && classes.map(classe => classe.substring(0, 1)).includes('3'))
             languages.push(req.body.SecondLanguage3);
 
         const paramCrsFull = utils.getFullParamsCours(courses, languages);
 
-        res.render('index', {
-            calendarURL: `${fullURL}calendar?${classes.map(classe => `grp[]=${classe}`).join('&')}${paramCrsFull}`,
-            selectList: selectList,
-            calendarURLRedirect: true,
-            toastrNotif: true,
-            toastrObject: {
-                type: 'success',
-                text: 'Calendrier généré avec succès',
-                timeout: 2000
-            }
-        });
+        req.flash('successToast', 'Calendrier généré avec succès');
+        req.flash('calendarURL', `${fullURL}calendar?${classes.map(classe => `grp[]=${classe}`).join('&')}${paramCrsFull}`);
+        req.flash('toCalendarURL', true);
+
+        res.redirect('/');
     }
 });
 
