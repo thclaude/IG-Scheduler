@@ -8,6 +8,7 @@
     - votre Bearer (auth sur le portail)
     - votre ID Discord
     - l'url Webhook Discord pour less notifications importantes
+    - la clée secréte pour les cookies (utilisé par express-flash)
 2. Renommer `credentials-default.json` en `credentials.json`
 3. Lancer ``npm install``
 
