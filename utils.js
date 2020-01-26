@@ -37,7 +37,6 @@ module.exports = {
                 ]
             }]
         };
-
         axios({
             method: 'post',
             url: credentials.webhookURL,
