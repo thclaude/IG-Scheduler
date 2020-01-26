@@ -35,8 +35,8 @@ router.get('/', function (req, res, next) {
         fillCourses(req.query.crs1, req.query.crs2, req.query.crs3);
 
         let fetchURLParams = `[${req.query.grp.map(group => `%22${classesCodes[group]}%22`).join(', ')}]`; /* Mets au bon format les groupes avant la requête */
-        axiosPortailLog.get(`https://portail.henallux.be/api/plannings/promotion/${fetchURLParams}`, {
-            transformResponse: [function (data){
+        axiosPortailLog.get(`plannings/promotion/${fetchURLParams}`, {
+            transformResponse: [function (data) {
                 let jsonData = JSON.parse(data);
                 return req.query.grp.includes(dataIntelligenceGroupe) ? jsonData.filter(cleanCoursesDataOption) : jsonData.filter(cleanCourses) /* Si l'option est Data Intelligence, alors on enlève les cours de l'option web par défaut (merci henallux d'avoir bien fait les horaires)*/
             }]
