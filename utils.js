@@ -129,7 +129,7 @@ function searchClassesCodes() {
     return new Promise(async (resolve, reject) => {
         let updatedJson = {};
         try {
-            let resBlocsID = await axiosPortailLog.get('https://portail.henallux.be/api/classes/orientation_and_implantation/6/1', {
+            let resBlocsID = await axiosPortailLog.get('classes/orientation_and_implantation/6/1', {
                 transformResponse: [function (data) {
                     let jsonData = JSON.parse(data);
                     return jsonData.data.map(item => item.id)
@@ -137,7 +137,7 @@ function searchClassesCodes() {
             });
 
             for (let bloc of resBlocsID.data) {
-                let resClassesID = await axiosPortailLog.get(`https://portail.henallux.be/api/classes/classe_and_orientation_and_implantation/${bloc}/6/1`, {
+                let resClassesID = await axiosPortailLog.get(`classes/classe_and_orientation_and_implantation/${bloc}/6/1`, {
                     transformResponse: [function (data) {
                         let jsonData = JSON.parse(data);
                         return jsonData.data.filter(grp => grp.classe);
