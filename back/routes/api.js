@@ -8,14 +8,10 @@ router.get('/groups/:blocID', function (req, res, next) {
     let blocID = parseInt(req.params.blocID);
     groupsService.getByBloc(blocID)
         .then(result => {
-            if(!result)
-                res.status(404).send('Not Found');
-            else
-                res.json(result)
+            res.send(result)
         })
         .catch(err => {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
+            res.status(404).send('Not Found');
         })
 });
 
@@ -23,14 +19,10 @@ router.get('/classes/:blocID', function (req, res, next) {
     let blocID = parseInt(req.params.blocID);
     classesService.getByBloc(blocID)
         .then(result => {
-            if(!result)
-                res.status(404).send('Not Found');
-            else
-                res.json(result)
+            res.send(result)
         })
         .catch(err => {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
+            res.status(404).send('Not Found');
         })
 });
 

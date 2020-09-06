@@ -21,7 +21,6 @@
     "http-errors": "~1.8.0",
     "ical-generator": "^1.15.0",
     "lodash": "^4.17.20",
-    "lokijs": "^1.5.11",
     "memorystore": "^1.6.2",
     "morgan": "~1.10.0",
     "node-cron": "^2.0.3",
