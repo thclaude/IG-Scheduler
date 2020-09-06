@@ -5,18 +5,8 @@
   ],
   "dataIntelligenceClasse": "3D",
   "serverWebPort": "8181",
-  "languagesCourses": [
-    "IG228",
-    "IG325"
-  ],
-  "labelENRenfort": [
-    "Anglais renforcement (option)",
-    "Anglais renforcement"
-  ],
-  "labelALNL": [
-    "Néerlandais/Allemand (options)",
-    "Néerlandais / Allemand",
-    "Néerlandais/Allemand"
-  ],
+  "languagesCourses": ["IG228", "IG325"],
+  "labelENRenfort": ["Anglais renforcement (option)", "Anglais renforcement"],
+  "labelALNL": ["Néerlandais/Allemand (options)", "Néerlandais / Allemand", "Néerlandais/Allemand"],
   "websiteAddress": "https://iesn.thibaultclaude.be/"
 }
