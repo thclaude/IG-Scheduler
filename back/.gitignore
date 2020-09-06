@@ -1,0 +1,6 @@
+../node_modules/fs
+ErrorView
+log/*
+.idea/*
+credentials.json
+./node_modules/*

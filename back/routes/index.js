@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const utils = require('../utils.js');
 const selectList = utils.getSelectList();
+const { websiteAddress } = require('../settings.json')
 /*
     j'ai utilisé la variable "calendarURLRedirect" que je passe dans la view index.ejs qui me permet d'ajouter #calendarURL à l'URL après la redirection de la génération d'URL
         - ça permet d'attérir directement au niveau du champ de l'URL
@@ -22,8 +23,7 @@ router.post('/', function (req, res, next) {
         req.flash('errorToast', 'Aucun groupe sélectionné');
         res.redirect('/');
     } else {
-        let fullURL = 'https://iesn.thibaultclaude.be' + req.originalUrl;
-
+        console.log(req.body)
         /* Génération (ou copie si plusieurs groupes sélectionnés de l'array contenant les groupes */
         let classes = [];
         if (!Array.isArray(req.body.Classes)) {
@@ -50,7 +50,7 @@ router.post('/', function (req, res, next) {
         const paramCrsFull = utils.getFullParamsCours(courses, languages);
 
         req.flash('successToast', 'Calendrier généré avec succès');
-        req.flash('calendarURL', `${fullURL}calendar?${classes.map(classe => `grp[]=${classe}`).join('&')}${paramCrsFull}`);
+        req.flash('calendarURL', `${websiteAddress}calendar?${classes.map(classe => `grp[]=${classe}`).join('&')}${paramCrsFull}`);
         req.flash('toCalendarURL', true);
 
         res.redirect('/');
