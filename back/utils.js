@@ -55,7 +55,7 @@ module.exports = {
 
                 if(!_.isEqual(currentCodes, reqCodes)){
                     currentCodes = reqCodes;
-                    //module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
+                    module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
                 }
                 getCalendars();
             })
@@ -81,7 +81,7 @@ const searchClassesCodes = () => {
             let resBlocsID = await axiosPortailLog.get('classes/orientation_and_implantation/6/1', {
                 transformResponse: [function (data) {
                     let jsonData = JSON.parse(data);
-                    return jsonData.data.map(item => item.id)
+                    return jsonData.data.map(item => item.id);
                 }]
             });
 
