@@ -1,5 +1,5 @@
 <template>
-  <v-footer dark padless app>
+  <v-footer dark padless app absolute>
     <v-row
         justify="center"
         no-gutters
