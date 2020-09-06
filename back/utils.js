@@ -3,6 +3,7 @@ const axios = require('axios');
 const blocs = require('./blocs.json');
 const _ = require('lodash');
 const path = require('path');
+const fs = require('fs');
 
 const axiosPortailLog = axios.create({
     baseURL: 'https://portail.henallux.be/api/',
@@ -54,56 +55,15 @@ module.exports = {
 
                 if(!_.isEqual(currentCodes, reqCodes)){
                     currentCodes = reqCodes;
-                    module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
+                    //module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
                 }
+                getCalendars();
             })
             .catch(err => {
                 module.exports.sendDiscordMessage("Error when searching codes " + err);
             })
     },
 
-    getSelectList: () => {
-        let selectList = {1: [], 2: [], 3: []};
-        /* Parcours du fichiers "blocs.json" pour préparer une liste qui sera utilisée pour remplir les selectss dans la view index.ejs */
-        for (let bloc in blocs) {
-            for (let courses in blocs[bloc]) {
-                let tempSelect = {
-                    value: blocs[bloc][courses],
-                    text: courses
-                };
-                selectList[bloc].push(tempSelect);
-            }
-        }
-        return selectList;
-    },
-
-    getFullParamsCours: (courses, languages) => {
-        /*
-        Parcours des cours sélectionnés pour la génération des String pour les paramètres URL
-            - A revoir ?
-        */
-        let tempCrs1 = courses.filter(crs => crs === "1" || (crs >= 100 && crs <= 199));
-        let paramCrs1 = `${tempCrs1.includes("1") ? 'crs1[]=all' : tempCrs1.map(crs => `crs1[]=${crs}`).join('&')}`;
-        let tempCrs2 = courses.filter(crs => crs === "2" || (crs >= 200 && crs <= 299));
-        let paramCrs2 = `${tempCrs2.includes("2") ? 'crs2[]=all' : tempCrs2.map(crs => `crs2[]=${crs}`).join('&')}`;
-        let tempCrs3 = courses.filter(crs => crs === "3" || (crs >= 300 && crs <= 399));
-        let paramCrs3 = `${tempCrs3.includes("3") ? 'crs3[]=all' : tempCrs3.map(crs => `crs3[]=${crs}`).join('&')}`;
-        let tempLanguage2 = languages[0] ? languages.filter(lang => lang.substring(--lang.length) === "2") : [];
-        let paramLang2 = tempLanguage2.map(lang => `optl2=${lang}`).join('&');
-        let tempLanguage3 = languages[0] ? languages.filter(lang => lang.substring(--lang.length) === "3") : [];
-        let paramLang3 = tempLanguage3.map(lang => `optl3=${lang}`).join('&');
-
-        /*
-            Concatenation des paramètres précédemment créés
-                - A revoir?
-         */
-        let paramCrsFull = (paramCrs1 && paramCrs1.length > 0) ? '&' + paramCrs1 : '';
-        paramCrsFull += (paramCrs2 && paramCrs2.length > 0) ? '&' + paramCrs2 : '';
-        paramCrsFull += (paramCrs3 && paramCrs3.length > 0) ? '&' + paramCrs3 : '';
-        paramCrsFull += (paramLang2 && paramLang2.length > 0) ? '&' + paramLang2 : '';
-        paramCrsFull += (paramLang3 && paramLang3.length > 0) ? '&' + paramLang3 : '';
-        return paramCrsFull
-    },
 
     getCurrentCodes: () => {
         return JSON.parse(currentCodes);
@@ -111,21 +71,10 @@ module.exports = {
 
     getAxiosPortailLog: () => {
         return axiosPortailLog;
-    },
-
-    renderTemplate: (res, req, template, data = {}) => {
-        const baseData = {
-            path: req.path,
-            active: template,
-            errorMsg: req.flash('errorToast'),
-            successMsg: req.flash('successToast'),
-            infoMsg: req.flash('infoToast')
-        };
-        res.render(path.resolve(`./views/${template}`), Object.assign(baseData, data));
     }
 };
 
-function searchClassesCodes() {
+const searchClassesCodes = () => {
     return new Promise(async (resolve, reject) => {
         let updatedJson = {};
         try {
@@ -153,4 +102,38 @@ function searchClassesCodes() {
             reject(e);
         }
     })
+}
+
+const getCalendars = () => {
+    const currentCodes = module.exports.getCurrentCodes();
+
+    for (const classe in currentCodes) {
+        const writer = fs.createWriteStream('./calendars/' + classe + '.ical');
+
+        axios({
+            method: 'get',
+            url: `https://portail.henallux.be/api/plannings/promotion/[%22${currentCodes[classe]}%22]/ical`,
+            responseType: 'stream',
+            timeout: 15000,
+            headers: {
+                'Authorization': 'Bearer ' + credentials.bearerPortail,
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
+            }
+        }).then(response => {
+            return new Promise((resolve, reject) => {
+                response.data.pipe(writer);
+                let error = null;
+                writer.on('error', err => {
+                    error = err;
+                    writer.close();
+                    reject(err);
+                });
+                writer.on('close', () => {
+                    if (!error) {
+                        resolve(true);
+                    }
+                });
+            });
+        });
+    }
 }
