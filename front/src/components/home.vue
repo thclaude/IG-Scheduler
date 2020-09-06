@@ -31,68 +31,87 @@
         <v-expansion-panel>
           <v-expansion-panel-header>Bloc 1</v-expansion-panel-header>
           <v-expansion-panel-content>
-            <v-select
-                multiple
-                chips
-                deletable-chips
-                persistent-hint
-                hint="Choisis ton/tes groupes"
-                v-model="selectedGroupsBloc"
-                label="Groupe"
-                :items="groupsBloc1"
-                prepend-inner-icon="mdi-account-group"
-                clearable
+            <v-skeleton-loader
+                :loading="groupsBloc1.length === 0"
+                type="card-heading"
             >
-            </v-select>
-            <v-autocomplete
-                multiple
-                chips
-                :small-chips="selectedClassesBloc1.length > 5"
-                deletable-chips
-                persistent-hint
-                hint="Choisis ton/tes cours"
-                v-model="selectedClassesBloc1"
-                label="Cours"
-                :items="classesBloc1"
-                prepend-inner-icon="mdi-school-outline"
-                class="mt-5"
-                clearable
-                @input="searchInput=null"
-                :search-input.sync="searchInput"
-            >
-              <v-list-item
-                  slot="prepend-item"
-                  ripple
-                  @click="toggleCours1"
-                  v-if="!searchInput"
+              <v-select
+                  multiple
+                  chips
+                  deletable-chips
+                  persistent-hint
+                  hint="Choisis ton/tes groupes"
+                  v-model="selectedGroups"
+                  label="Groupe"
+                  :items="groupsBloc1"
+                  prepend-inner-icon="mdi-account-group"
+                  clearable
               >
-                <v-list-item-action>
-                  <v-icon>{{ iconSelected(selectedClassesBloc1, classesBloc1) }}</v-icon>
-                </v-list-item-action>
-                <v-list-item-title>{{ labelSelect(selectedClassesBloc1, classesBloc1) }}</v-list-item-title>
-              </v-list-item>
-              <v-divider
-                  slot="prepend-item"
-                  class="mt-2"
-                  v-if="!searchInput"
-              />
-            </v-autocomplete>
+              </v-select>
+            </v-skeleton-loader>
+            <v-skeleton-loader
+                :loading="classesBloc1.length === 0"
+                type="card-heading"
+            >
+              <v-autocomplete
+                  multiple
+                  chips
+                  :small-chips="selectedClassesBloc1.length > 5"
+                  deletable-chips
+                  persistent-hint
+                  hint="Choisis ton/tes cours"
+                  v-model="selectedClassesBloc1"
+                  label="Cours"
+                  :items="classesBloc1"
+                  prepend-inner-icon="mdi-school-outline"
+                  class="mt-5"
+                  clearable
+                  @input="searchInput=null"
+                  :search-input.sync="searchInput"
+              >
+                <v-list-item
+                    slot="prepend-item"
+                    ripple
+                    @click="toggleCours1"
+                    v-if="!searchInput"
+                >
+                  <v-list-item-action>
+                    <v-icon>{{ iconSelected(selectedClassesBloc1, classesBloc1) }}</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title>{{ labelSelect(selectedClassesBloc1, classesBloc1) }}</v-list-item-title>
+                </v-list-item>
+                <v-divider
+                    slot="prepend-item"
+                    class="mt-2"
+                    v-if="!searchInput"
+                />
+              </v-autocomplete>
+            </v-skeleton-loader>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel >
           <v-expansion-panel-header>Bloc 2</v-expansion-panel-header>
           <v-expansion-panel-content>
+            <v-skeleton-loader
+                :loading="groupsBloc2.length === 0"
+                type="card-heading"
+            >
             <v-select
                 multiple
                 chips
                 deletable-chips
                 persistent-hint
                 hint="Choisis ton/tes groupes"
-                v-model="selectedGroupsBloc"
+                v-model="selectedGroups"
                 label="Groupe"
                 :items="groupsBloc2"
                 prepend-inner-icon="mdi-account-group"
             />
+            </v-skeleton-loader>
+            <v-skeleton-loader
+                :loading="classesBloc2.length === 0"
+                type="card-heading"
+            >
             <v-autocomplete
                 multiple
                 chips
@@ -139,22 +158,32 @@
               <v-radio label="Anglais renforcement" value="EN2"></v-radio>
               <v-radio label="Allemand / Néerlandais" value="ALNL2"></v-radio>
             </v-radio-group>
+            </v-skeleton-loader>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel >
           <v-expansion-panel-header>Bloc 3</v-expansion-panel-header>
           <v-expansion-panel-content>
+            <v-skeleton-loader
+                :loading="groupsBloc3.length === 0"
+                type="card-heading"
+            >
             <v-select
                 multiple
                 chips
                 deletable-chips
                 persistent-hint
                 hint="Choisis ton/tes groupes"
-                v-model="selectedGroupsBloc"
+                v-model="selectedGroups"
                 label="Groupe"
                 :items="groupsBloc3"
                 prepend-inner-icon="mdi-account-group"
             />
+            </v-skeleton-loader>
+            <v-skeleton-loader
+                :loading="classesBloc3.length === 0"
+                type="card-heading"
+            >
             <v-autocomplete
                 multiple
                 chips
@@ -201,6 +230,7 @@
               <v-radio label="Anglais renforcement" value="EN3"></v-radio>
               <v-radio label="Allemand / Néerlandais" value="ALNL3"></v-radio>
             </v-radio-group>
+            </v-skeleton-loader>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -252,13 +282,14 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   title: 'Accueil',
   name: "home",
   data() {
     return {
       showAccordion: null,
-      selectedGroupsBloc: [],
+      selectedGroups: [],
       selectedClassesBloc1: [],
       selectedClassesBloc2: [],
       selectedClassesBloc3: [],
@@ -270,83 +301,22 @@ export default {
       showToast: false,
       textToast: '',
       colorToast: '',
-      groupsBloc1: [{text: "Groupe A", value: "1A"}, {text: "Groupe B", value: "1B"}, {text: "Groupe C", value: "1C"}, {text: "Groupe D", value: "1D"}, {text: "Groupe E", value: "1E"}, {text: "Groupe F", value: "1F", disabled: true}, {text: "Groupe G", value: "1G", disabled: true}, {text: "Groupe H", value: "1H", disabled: true}],
-      groupsBloc2: [{text: "Groupe A", value: "2A"}, {text: "Groupe B", value: "2B"}, {text: "Groupe C", value: "2C", disabled: true}, {text: "Groupe D", value: "2D", disabled: true}, {text: "Groupe E", value: "2E", disabled: true}, {text: "Groupe F", value: "2F", disabled: true}, {text: "Groupe G", value: "2G", disabled: true}, {text: "Groupe H", value: "2H", disabled: true}],
-      groupsBloc3: [{text: "Groupe A", value: "3A"}, {text: "Groupe B", value: "3B"}, {text: "Groupe C", value: "3C", disabled: true}, {text: "Groupe D", value: "3D"}, {text: "Groupe E", value: "3E", disabled: true}, {text: "Groupe F", value: "3F", disabled: true}, {text: "Groupe G", value: "3G", disabled: true}, {text: "Groupe H", value: "3H", disabled: true}],
-      classesBloc1: [{
-        text: "IG121 - Principes de programmation",
-        value: 121
-      }, {text: "IG122 - Langage de programmation : Bases", value: 122}, {
-        text: "IG123 - Description des ordinateurs",
-        value: 123
-      }, {
-        text: "IG124 - Outils mathématiques pour l'informatique",
-        value: 124
-      }, {text: "IG125 - Introduction à la gestion d'entreprise", value: 125}, {
-        text: "IG126 - Langues étrangères",
-        value: 126
-      }, {
-        text: "IG127 - Langage de programmation avancé",
-        value: 127
-      }, {
-        text: "IG128 - Organisation et exploitation des données",
-        value: 128
-      }, {text: "IG129 - Conception orientée objet", value: 129}, {
-        text: "IG130 - Introduction au Web",
-        value: 130
-      }, {text: "IG131 - Modélisation et traitement des données", value: 131}, {
-        text: "IG132 - Economie et management",
-        value: 132
-      }],
-      classesBloc2: [{
-        text: "IG221 - Analyse métier et conception de bases de données",
-        value: 221
-      }, {text: "IG222 - Programmation orientée objet", value: 222}, {
-        text: "IG223 - Technologies Web",
-        value: 223
-      }, {text: "IG224 - Systèmes d'exploitation", value: 224}, {
-        text: "IG225 - Séminaires technologiques",
-        value: 225
-      }, {text: "IG226 - Modélisation de l'événementiel", value: 226}, {
-        text: "IG227 - Aide à la gestion d'entreprise",
-        value: 227
-      }, {text: "IG228 - Communication", value: 228}, {
-        text: "IG229 - Analyse et gestion de projets",
-        value: 229
-      }, {text: "IG230 - Projet informatique intégré", value: 230}, {
-        text: "IG231 - Réseaux",
-        value: 231
-      }, {text: "IG232 - Introduction à la Data Intelligence", value: 232}, {
-        text: "IG233 - Culture générale",
-        value: 233
-      }],
-      classesBloc3: [{header: "Tronc Commun"}, {
-        text: "IG321 - Business Intelligence and Data Analytics",
-        value: 321
-      }, {text: "IG322 - Développements Web", value: 322}, {
-        text: "IG323 - Conception de bases de données avancées",
-        value: 323
-      }, {text: "IG324 - Aide à la décision managériale", value: 324}, {
-        text: "IG325 - Langues étrangères",
-        value: 325
-      }, {header: "Option Mobile et Web avancé"}, {
-        text: "IG327 - Programmation et nouvelles technologies",
-        value: 327
-      }, {
-        text: "IG328 - Développement avancé d'application Web",
-        value: 328
-      }, {header: "Option Data Intelligence"}, {
-        text: "IG330 - Intelligence artificielle : Machine Learning et Data Mining",
-        value: 330
-      }, {text: "IG331 - Big Data", value: 331}, {
-        text: "IG332 - Séminaires Data Science",
-        value: 332
-      }, {header: "Stage et TFE"}, {
-        text: "IG334 - Activité d'intégration professionnelle et travail de fin d'études",
-        value: 334
-      }],
-      searchInput: null,
+      groupsBloc1: [],
+      groupsBloc2: [],
+      groupsBloc3: [],
+      classesBloc1: [],
+      classesBloc2: [],
+      classesBloc3: [],
+      searchInput: null
     }
+  },
+  async created() {
+    this.groupsBloc1 = (await axios.get('http://localhost:8181/api/groups/1')).data
+    this.groupsBloc2 = (await axios.get('http://localhost:8181/api/groups/2')).data
+    this.groupsBloc3 = (await axios.get('http://localhost:8181/api/groups/3')).data
+    this.classesBloc1 = (await axios.get('http://localhost:8181/api/classes/1')).data
+    this.classesBloc2 = (await axios.get('http://localhost:8181/api/classes/2')).data
+    this.classesBloc3 = (await axios.get('http://localhost:8181/api/classes/3')).data
   },
   computed: {
     selectedAllOptions() {
@@ -375,7 +345,7 @@ export default {
       }
     },
     checkGroupsNotEmpty(){
-      return this.selectedGroupsBloc.length !== 0;
+      return this.selectedGroups.length !== 0;
     },
     getLanguagesArray(){
       return (groups) => {
@@ -462,8 +432,8 @@ export default {
       }else{
         let generatedObject = {
           classes: this.selectedClassesBloc1.concat(this.selectedClassesBloc2).concat(this.selectedClassesBloc3),
-          groups: this.selectedGroupsBloc,
-          languages: this.getLanguagesArray(this.selectedGroupsBloc),
+          groups: this.selectedGroups,
+          languages: this.getLanguagesArray(this.selectedGroups),
           allClassesBloc1: this.selectedClassesBloc1.length === this.classesBloc1.length,
           //pas nécessaire de mettre crs1[] = all si aucun cours n'est sélectionné (en backend, si aucun cours sélectionné => tous les cours sont pris en charge
           //allClassesBloc1: (this.selectedClassesBloc1.length === this.classesBloc1.length) || (this.selectedGroupsBloc.filter(group => group.charAt(0) === '1').length > 0 && this.selectedClassesBloc1.length === 0),
