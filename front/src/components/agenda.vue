@@ -1,0 +1,210 @@
+<template>
+  <v-container fluid class="text-center">
+    <v-layout row wrap justify-center>
+      <v-col cols="4">
+        <v-select
+            v-model="selectedBloc"
+            :items="blocsOption"
+            label="Choix du bloc"
+            hide-details
+            outlined
+            dense
+            @change="getGroups"
+        ></v-select>
+      </v-col>
+      <v-col cols="4">
+        <v-select
+            v-model="selectedGroup"
+            :items="groups"
+            label="Choix du groupe"
+            hide-details
+            outlined
+            dense
+            :disabled="!selectedBloc"
+            @change="getEvents"
+        ></v-select>
+      </v-col>
+    </v-layout>
+    <v-skeleton-loader
+        :loading="calendarLoading"
+        v-if="selectedGroup && selectedBloc "
+        type="date-picker-days@3"
+    >
+    <v-sheet height="64">
+      <v-toolbar flat color="white">
+        <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
+          Aujourd'hui
+        </v-btn>
+        <v-btn fab text small color="grey darken-2" @click="prev">
+          <v-icon small>mdi-chevron-left</v-icon>
+        </v-btn>
+        <v-btn fab text small color="grey darken-2" @click="next">
+          <v-icon small>mdi-chevron-right</v-icon>
+        </v-btn>
+        <v-toolbar-title v-if="$refs.calendar">
+          {{ $refs.calendar.title }}
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-menu bottom right>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+                outlined
+                color="grey darken-2"
+                v-bind="attrs"
+                v-on="on"
+            >
+              <span>{{ typeToLabel[type] }}</span>
+              <v-icon right>mdi-menu-down</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="type = 'day'">
+              <v-list-item-title>Jour</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="type = 'week'">
+              <v-list-item-title>Semaine</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="type = 'month'">
+              <v-list-item-title>Mois</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-toolbar>
+    </v-sheet>
+    <v-calendar
+        ref="calendar"
+        v-model="focus"
+        color="primary"
+        :events="events"
+        :event-color="getEventColor"
+        :type="type"
+        :weekdays="weekdays"
+        @click:event="showEvent"
+        @click:more="viewDay"
+        @click:date="viewDay"
+        locale="fr"
+    ></v-calendar>
+    <v-menu
+        v-model="selectedOpen"
+        :close-on-content-click="false"
+        :activator="selectedElement"
+        offset-x
+    >
+      <v-card
+          color="grey lighten-4"
+          min-width="350px"
+          flat
+      >
+        <v-toolbar
+            :color="selectedEvent.color"
+            dark
+        >
+          <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn
+              text
+              @click="selectedOpen = false"
+          >
+            <v-icon>mdi-close-thick</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text>
+          <span v-html="selectedEvent.details"></span>
+        </v-card-text>
+      </v-card>
+    </v-menu>
+    </v-skeleton-loader>
+  </v-container>
+</template>
+
+<script>
+import axios from "axios";
+export default {
+  title: 'Agenda',
+  name: "calendar",
+  data: () => ({
+    focus: '',
+    type: 'month',
+    typeToLabel: {
+      month: 'Mois',
+      week: 'Semaine',
+      day: 'Jour',
+    },
+    calendarLoading: false,
+    selectedEvent: {},
+    selectedElement: null,
+    selectedOpen: false,
+    boilerplate: true,
+    events: [],
+    colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
+    names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+    weekdays: [1, 2, 3, 4, 5, 6, 0],
+    blocsOption: [{
+      text: "Bloc 1",
+      value: 1,
+    },{
+      text: "Bloc 2",
+      value: 2,
+    },{
+      text: "Bloc 3",
+      value: 3,
+    },],
+    selectedBloc: '',
+    selectedGroup: '',
+    groups: []
+  }),
+  methods: {
+    async getGroups (){
+      this.selectedGroup = '';
+      axios.get(`http://localhost:8181/api/groups/${this.selectedBloc}`)
+        .then(result => {
+          this.groups = result.data;
+        })
+    },
+    getEvents(){
+      this.calendarLoading = true;
+      axios.get(`http://localhost:8181/api/calendar/${this.selectedGroup}`)
+          .then(result =>{
+            this.events = result.data;
+            this.calendarLoading = false;
+          })
+    },
+    viewDay ({ date }) {
+      this.focus = date
+      this.type = 'day'
+    },
+    getEventColor (event) {
+      return event.color
+    },
+    setToday () {
+      this.focus = ''
+    },
+    prev () {
+      this.$refs.calendar.prev()
+    },
+    next () {
+      this.$refs.calendar.next()
+    },
+    showEvent ({ nativeEvent, event }) {
+      const open = () => {
+        this.selectedEvent = event
+        this.selectedElement = nativeEvent.target
+        setTimeout(() => this.selectedOpen = true, 10)
+      }
+
+      if (this.selectedOpen) {
+        this.selectedOpen = false
+        setTimeout(open, 10)
+      } else {
+        open()
+      }
+
+      nativeEvent.stopPropagation()
+    }
+  },
+}
+</script>
+
+<style scoped>
+
+</style>

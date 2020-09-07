@@ -1,5 +1,5 @@
 <template>
-  <v-footer dark padless app absolute>
+  <v-footer dark padless app absolute >
     <v-row
         justify="center"
         no-gutters
@@ -9,7 +9,7 @@
           color="grey"
           text
           rounded
-          class="my-2 "
+          class="my-2"
           href="https://github.com/IESN-IG/IESN-Scheduler"
           target="_blank"
       >
