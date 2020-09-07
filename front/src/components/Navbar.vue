@@ -46,6 +46,7 @@ export default {
     return {
       links: [
         { icon: 'mdi-home', text: 'Accueil', route: '/'},
+        { icon: 'mdi-calendar-month-outline', text: 'Agenda', route: '/agenda'},
         { icon: 'mdi-lifebuoy', text: 'Aide', route: '/help'},
       ]
     }
