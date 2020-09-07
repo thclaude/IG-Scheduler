@@ -6,6 +6,7 @@ const http = require('http');
 const cron = require('node-cron');
 
 const apiRouter = require('./routes/api');
+const calendarRouter = require('./routes/calendar');
 const serverWebPort = require('./settings.json').serverWebPort;
 const utils = require('./utils.js');
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/api', apiRouter);
+app.use('/calendar', calendarRouter);
 
 http.createServer(app).listen(serverWebPort, function () {
     console.log(`Webserver started on port ${serverWebPort}`);
