@@ -2,7 +2,7 @@ node_modules
 ErrorView
 log/*
 credentials.json
-db-init.js
+/back/db-init.js
 .DS_Store
 /dist
 calendars
