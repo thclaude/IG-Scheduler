@@ -2,21 +2,23 @@
 
 ### 🏠 [Site](https://iesn.thibaultclaude.be)
 
-## Installation
+## Fonctionnalités
 
-1. Remplir `credentials-default.json` avec : 
-    - votre Bearer (auth sur le portail)
-    - votre ID Discord
-    - l'url Webhook Discord pour less notifications importantes
-    - la clée secréte pour les cookies (utilisé par express-flash)
-2. Renommer `credentials-default.json` en `credentials.json`
-3. Lancer ``npm install``
+- Génération d'iCal personnalisé selon le bloc, le groupe et les cours permettant une synchronisation dans les applications d'agenda
+- Affichage de l'horaire d'un groupe donné
 
-## Lancer
+## Technos utilisées
 
-```sh
-npm run start
-```
+- __Backend__ : express.js
+- __Frontend__ : VueJS
+
+## TODO
+
+* Implémenter une API complète pour les cours/groupes (CRUD)
+    * Panel admin pour mettre à jour rapidement les données si nécessaire (?)
+* Mettre en place un système de cache pour les calendriers
+    * Évite trop de requête sur l'API Henallux
+    * Évite les moments de down de l'API
 
 ## Notes
 
@@ -28,7 +30,7 @@ npm run start
 👤 **Thibault CLAUDE**
 
 * Github: [@tclaude94](https://github.com/tclaude94)
-* Discord : tiiBz#5309
+* Discord : tiiBz#1337
 
 ***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
