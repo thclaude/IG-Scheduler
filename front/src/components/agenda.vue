@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="text-center">
     <v-layout row wrap justify-center>
-      <v-col cols="4">
+      <v-col sm="5" xl="4" md="4">
         <v-select
             v-model="selectedBloc"
             :items="blocsOption"
@@ -12,7 +12,7 @@
             @change="getGroups"
         ></v-select>
       </v-col>
-      <v-col cols="4">
+      <v-col sm="5" xl="4" md="4">
         <v-select
             v-model="selectedGroup"
             :items="groups"
@@ -32,9 +32,6 @@
     >
     <v-sheet height="64">
       <v-toolbar flat color="white">
-        <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
-          Aujourd'hui
-        </v-btn>
         <v-btn fab text small color="grey darken-2" @click="prev">
           <v-icon small>mdi-chevron-left</v-icon>
         </v-btn>
@@ -84,6 +81,14 @@
         @click:date="viewDay"
         locale="fr"
     ></v-calendar>
+      <v-sheet height="64">
+        <v-toolbar flat color="white">
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
+            Aujourd'hui
+          </v-btn>
+          <v-spacer></v-spacer>
+        </v-toolbar>
+      </v-sheet>
     <v-menu
         v-model="selectedOpen"
         :close-on-content-click="false"
@@ -136,8 +141,6 @@ export default {
     selectedOpen: false,
     boilerplate: true,
     events: [],
-    colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-    names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
     weekdays: [1, 2, 3, 4, 5, 6, 0],
     blocsOption: [{
       text: "Bloc 1",
@@ -156,14 +159,14 @@ export default {
   methods: {
     async getGroups (){
       this.selectedGroup = '';
-      axios.get(`http://localhost:8181/api/groups/${this.selectedBloc}`)
+      axios.get(`http://192.168.0.3:8181/api/groups/${this.selectedBloc}`)
         .then(result => {
           this.groups = result.data;
         })
     },
     getEvents(){
       this.calendarLoading = true;
-      axios.get(`http://localhost:8181/api/calendar/${this.selectedGroup}`)
+      axios.get(`http://192.168.0.3:8181/api/calendar/${this.selectedGroup}`)
           .then(result =>{
             this.events = result.data;
             this.calendarLoading = false;
