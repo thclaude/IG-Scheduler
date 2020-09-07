@@ -4,6 +4,7 @@ import vuetify from './plugins/vuetify';
 import VueRouter from 'vue-router';
 import home from '@/components/home';
 import help from '@/components/help';
+import agenda from '@/components/agenda';
 import error404 from '@/components/error404';
 import titleMixin from './mixins/title';
 
@@ -11,6 +12,7 @@ import titleMixin from './mixins/title';
 const routes = [
   { path: '/', component: home },
   { path: '/help', component: help },
+  { path: '/agenda', component: agenda },
   { path: '/404', component: error404 },
   { path: '*', redirect: '/404' }
 ]
