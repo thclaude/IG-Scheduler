@@ -5,6 +5,7 @@ const blocs = require('../blocs.json');
 const ical = require("ical-generator");
 const mobileWebCourses = Array.from(require('../settings.json').webOptionCourses);
 const patternDate = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
+const patternTitle = /Matière : ([a-zA-Z0-9-'ÉéèÈà_!.\/ ()]*)([^\n]*\n+)+/;
 const patternCourse = /([a-zA-Zé /]+)/
 const dataIntelligenceGroupe = require('../settings.json').dataIntelligenceClasse;
 const languagesCourses = require('../settings.json').languagesCourses;
@@ -30,7 +31,6 @@ router.get('/', function (req, res, next) {
     let calendar = ical({name: "Cours", timezone: "Europe/Brussels"});
 
     if (req.query.grp.every(group => Object.keys(classesCodes).includes(group))) { /* Check que les groupes existent bien dans le fichier JSON */
-
         blocsDetermine(req.query.grp);
         fillCourses(req.query.crs1, req.query.crs2, req.query.crs3);
 
@@ -48,7 +48,7 @@ router.get('/', function (req, res, next) {
                             start: new Date(course.start.replace(patternDate, "$1-$2-$3T$4:$5:$6")),
                             end: new Date(course.end.replace(patternDate, "$1-$2-$3T$4:$5:$6")),
                             location: course.location,
-                            summary: course.title,
+                            summary: course.details.replace(patternTitle, "$1"),
                             description: course.details
                         });
                     }
@@ -60,7 +60,6 @@ router.get('/', function (req, res, next) {
                 utils.updateClassesCodes();
             })
     } else {
-        req.flash('errorToast', 'Un groupe non validé a été rentré');
         res.redirect('/');
     }
 });
@@ -78,7 +77,6 @@ function fillCourses(course1, course2, course3) {
 
 /*
     Clean la liste des cours avec les cours utiles & évite les doublons (cours généraux) si plusieurs groupes du même blocs sont sélectionnés
-
     Amélioration :
         - Mettre direct le JSON dans le Set ? Possible/utile ? Enlèverai automatiquement les doublons
  */
