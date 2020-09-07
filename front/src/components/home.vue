@@ -3,22 +3,22 @@
     <h1 class="blue-grey--text text--lighten-1 font-weight-light">Utilisation du site</h1>
     <p id="pAccroche">
       Hello ! 😄
-      <v-col cols="5" class="margin-auto">
+      <v-col sm="5" xl="6" md="6" class="margin-auto">
         Pour générer ton calendrier (.ics) perso, rien de plus simple : indique le(s) groupe(s) que tu suis ainsi que
         les cours présents dans ton PAE puis génère le lien et utilise le pour créer un calendrier Google !
       </v-col>
     </p>
-    <v-row>
-      <v-col>
+    <v-row justify="center" align="center">
+      <v-col sm="5" xl="6" md="6">
         <v-row align="center" justify="center">
           <v-icon x-large color="blue">mdi-autorenew</v-icon>
           <h3>Mise à jour automatique</h3></v-row>
         Horaire toujours à jour sur PC, tablette etc sans passer par le portail !
       </v-col>
-      <v-col>
+      <v-col sm="5" xl="6" md="6">
         <v-row align="center" justify="center">
           <v-icon x-large color="teal">mdi-pencil-outline</v-icon>
-          <h3>Personnalisable</h3></v-row>
+          <h3>100% Personnalisable</h3></v-row>
         Possibilité de choisir uniquement les cours de votre PAE !
       </v-col>
     </v-row>
@@ -248,11 +248,11 @@
     </v-form>
     <v-scroll-y-reverse-transition>
       <v-row justify="center" align="center" v-if="urlGenerated">
-        <v-col cols="10">
-          <v-text-field v-model="urlGenerated" disabled persistent-hint hint="URL Générée" prepend-inner-icon="mdi-link-variant" full-width>
+        <v-col sm="9" xl="11" md="11">
+          <v-text-field id="urlGenerated" v-model="urlGenerated" readonly persistent-hint hint="URL Générée" prepend-inner-icon="mdi-link-variant" full-width>
           </v-text-field>
         </v-col>
-        <v-col>
+        <v-col cols="auto">
           <v-tooltip right v-model="showConfirmTiptool">
             <template v-slot:activator="{ on: tooltipSuccess }">
               <v-tooltip right>
@@ -297,7 +297,6 @@ export default {
       selectedLangBloc3: '',
       urlGenerated: "",
       showConfirmTiptool: false,
-      confirmTipToolText:'',
       showToast: false,
       textToast: '',
       colorToast: '',
@@ -311,12 +310,12 @@ export default {
     }
   },
   async created() {
-    this.groupsBloc1 = (await axios.get('http://localhost:8181/api/groups/1')).data
-    this.groupsBloc2 = (await axios.get('http://localhost:8181/api/groups/2')).data
-    this.groupsBloc3 = (await axios.get('http://localhost:8181/api/groups/3')).data
-    this.classesBloc1 = (await axios.get('http://localhost:8181/api/classes/1')).data
-    this.classesBloc2 = (await axios.get('http://localhost:8181/api/classes/2')).data
-    this.classesBloc3 = (await axios.get('http://localhost:8181/api/classes/3')).data
+    this.groupsBloc1 = (await axios.get('http://192.168.0.3:8181/api/groups/1')).data
+    this.groupsBloc2 = (await axios.get('http://192.168.0.3:8181/api/groups/2')).data
+    this.groupsBloc3 = (await axios.get('http://192.168.0.3:8181/api/groups/3')).data
+    this.classesBloc1 = (await axios.get('http://192.168.0.3:8181/api/classes/1')).data
+    this.classesBloc2 = (await axios.get('http://192.168.0.3:8181/api/classes/2')).data
+    this.classesBloc3 = (await axios.get('http://192.168.0.3:8181/api/classes/3')).data
   },
   computed: {
     selectedAllOptions() {
@@ -417,7 +416,14 @@ export default {
     },
     confirmCopyTooltip(){
       this.showConfirmTiptool = true;
-      navigator.clipboard.writeText(this.urlGenerated);
+      if(navigator.clipboard){
+        navigator.clipboard.writeText(this.urlGenerated);
+      }else{
+        const input = document.getElementById('urlGenerated');
+        input.focus();
+        input.select();
+        document.execCommand('copy');
+      }
       setTimeout(()=>{
         this.showConfirmTiptool = false
       },1000);
