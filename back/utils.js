@@ -1,8 +1,6 @@
 const credentials = require('./credentials.json');
 const axios = require('axios');
-const blocs = require('./blocs.json');
 const _ = require('lodash');
-const path = require('path');
 const fs = require('fs');
 
 const axiosPortailLog = axios.create({
@@ -55,9 +53,9 @@ module.exports = {
 
                 if(!_.isEqual(currentCodes, reqCodes)){
                     currentCodes = reqCodes;
-                    module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
+                    //module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
                 }
-                getCalendars();
+                //getCalendars();
             })
             .catch(err => {
                 module.exports.sendDiscordMessage("Error when searching codes " + err);
