@@ -32,7 +32,7 @@
               >
                 <v-card flat>
                   <v-card-text>
-                    <v-row align="center" justify="center"><v-img :src="dataTuto.img.src" :max-width="dataTuto.img.width" :max-height="dataTuto.img.height" contain /></v-row>
+                    <v-row align="center" justify="center"><v-img :src="dataTuto.img.src" :max-width="dataTuto.img.width" :max-height="dataTuto.img.height" class="img-fluid"/></v-row>
                     <v-row class="row-text-tuto mt-5" align="center" justify="center"><span v-html="dataTuto.text"></span></v-row>
                   </v-card-text>
                 </v-card>
@@ -43,7 +43,6 @@
       </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-
   </v-container>
 </template>
 
@@ -167,9 +166,11 @@ export default {
 .row-text-tuto{
   background-color: #80808042;
   color: black;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  max-width: 75%;
+  padding: 5px;
+  max-width: 100%;
   margin: auto;
+}
+.img-fluid{
+  flex: 0 1 auto;
 }
 </style>

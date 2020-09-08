@@ -3,8 +3,8 @@
     <v-layout row wrap justify-center>
       <v-col sm="5" xl="4" md="4">
         <v-select
-            v-model="selectedBloc"
-            :items="blocsOption"
+            v-model="selection.bloc"
+            :items="data.blocsOption"
             label="Choix du bloc"
             hide-details
             outlined
@@ -14,20 +14,20 @@
       </v-col>
       <v-col sm="5" xl="4" md="4">
         <v-select
-            v-model="selectedGroup"
-            :items="groups"
+            v-model="selection.group"
+            :items="data.groups"
             label="Choix du groupe"
             hide-details
             outlined
             dense
-            :disabled="!selectedBloc"
+            :disabled="!selection.bloc"
             @change="getEvents"
         ></v-select>
       </v-col>
     </v-layout>
     <v-skeleton-loader
         :loading="calendarLoading"
-        v-if="selectedGroup && selectedBloc "
+        :boilerplate="boilerplate"
         type="date-picker-days@3"
     >
     <v-sheet height="64">
@@ -72,7 +72,7 @@
         ref="calendar"
         v-model="focus"
         color="primary"
-        :events="events"
+        :events="data.events"
         :event-color="getEventColor"
         :type="type"
         :weekdays="weekdays"
@@ -90,9 +90,9 @@
         </v-toolbar>
       </v-sheet>
     <v-menu
-        v-model="selectedOpen"
+        v-model="selection.open"
         :close-on-content-click="false"
-        :activator="selectedElement"
+        :activator="selection.element"
         offset-x
     >
       <v-card
@@ -101,20 +101,20 @@
           flat
       >
         <v-toolbar
-            :color="selectedEvent.color"
+            :color="selection.event.color"
             dark
         >
-          <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+          <v-toolbar-title v-html="selection.event.name"></v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn
               text
-              @click="selectedOpen = false"
+              @click="selection.open = false"
           >
             <v-icon>mdi-close-thick</v-icon>
           </v-btn>
         </v-toolbar>
         <v-card-text>
-          <span v-html="selectedEvent.details"></span>
+          <span v-html="selection.event.details"></span>
         </v-card-text>
       </v-card>
     </v-menu>
@@ -135,40 +135,47 @@ export default {
       week: 'Semaine',
       day: 'Jour',
     },
-    calendarLoading: false,
-    selectedEvent: {},
-    selectedElement: null,
-    selectedOpen: false,
+    calendarLoading: true,
     boilerplate: true,
-    events: [],
-    weekdays: [1, 2, 3, 4, 5, 6, 0],
-    blocsOption: [{
-      text: "Bloc 1",
-      value: 1,
-    },{
-      text: "Bloc 2",
-      value: 2,
-    },{
-      text: "Bloc 3",
-      value: 3,
-    },],
-    selectedBloc: '',
-    selectedGroup: '',
-    groups: []
+    selection: {
+      event: {},
+      element: null,
+      open: false,
+      bloc: '',
+      group: ''
+    },
+    data: {
+      events: [],
+      blocsOption: [{
+        text: "Bloc 1",
+        value: 1,
+      },{
+        text: "Bloc 2",
+        value: 2,
+      },{
+        text: "Bloc 3",
+        value: 3,
+      },],
+      groups: []
+    },
+    weekdays: [1, 2, 3, 4, 5, 6, 0]
   }),
   methods: {
     async getGroups (){
-      this.selectedGroup = '';
-      axios.get(`http://192.168.0.3:8181/api/groups/${this.selectedBloc}`)
+      this.selection.group = '';
+      this.calendarLoading = true;
+      this.boilerplate = true;
+      axios.get(`http://192.168.0.3:8181/api/groups/${this.selection.bloc}`)
         .then(result => {
-          this.groups = result.data;
+          this.data.groups = result.data;
         })
     },
     getEvents(){
+      this.boilerplate = false;
       this.calendarLoading = true;
-      axios.get(`http://192.168.0.3:8181/api/calendar/${this.selectedGroup}`)
+      axios.get(`http://192.168.0.3:8181/api/calendar/${this.selection.group}`)
           .then(result =>{
-            this.events = result.data;
+            this.data.events = result.data;
             this.calendarLoading = false;
           })
     },
@@ -190,13 +197,13 @@ export default {
     },
     showEvent ({ nativeEvent, event }) {
       const open = () => {
-        this.selectedEvent = event
-        this.selectedElement = nativeEvent.target
-        setTimeout(() => this.selectedOpen = true, 10)
+        this.selection.event = event
+        this.selection.element = nativeEvent.target
+        setTimeout(() => this.selection.open = true, 10)
       }
 
-      if (this.selectedOpen) {
-        this.selectedOpen = false
+      if (this.selection.open) {
+        this.selection.open = false
         setTimeout(open, 10)
       } else {
         open()
