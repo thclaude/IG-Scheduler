@@ -1,9 +1,8 @@
 <template>
-  <v-footer dark padless app absolute>
+  <v-footer padless app absolute>
     <v-row
         justify="center"
         no-gutters
-        class="white"
     >
       <v-btn
           color="grey"
