@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to IESN Scheduler 😎</h1>
+<h1 align="center">Welcome to IESN Scheduler 👋</h1>
 
 ### 🏠 [Site](https://iesn.thibaultclaude.be)
 
@@ -23,7 +23,7 @@
 ## Notes
 
 * Stock en local des blocs + A.A. + code dans le fichier `blocs.json`
-    - Possible de parse le site ([lien](https://services.henallux.be/paysage/public/cursus/infocursus/idCursus/6)) mais perte de temps(?) et risque de site off, c'est que une fois par année en toute logique donc créer un cron qui effectue cette tâche à la rentrée
+    - Possible de parse le site ([lien](https://services.henallux.be/paysage/public/cursus/infocursus/idCursus/6)) 
     
 ## Auteur
 
