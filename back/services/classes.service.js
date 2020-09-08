@@ -7,7 +7,7 @@ module.exports = () => {
     return {
         getByBloc: function (id) {
             return new Promise(function (resolve, reject) {
-                switch(id){
+                switch (id) {
                     case 1:
                         resolve([{
                             text: "IG121 - Principes de programmation",

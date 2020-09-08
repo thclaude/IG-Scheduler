@@ -19,7 +19,7 @@ module.exports = {
         module.exports.updateClassesCodes(true);
     },
 
-    sendDiscordMessage: (message, isErr = true) =>{
+    sendDiscordMessage: (message, isErr = true) => {
         const discordMessage = {
             content: isErr ? `<@${credentials.idDiscord}>` : "",
             avatar_url: "https://portail.henallux.be/favicon-96x96.png",
@@ -51,9 +51,9 @@ module.exports = {
             .then(res => {
                 let reqCodes = JSON.stringify(res);
 
-                if(!_.isEqual(currentCodes, reqCodes)){
+                if (!_.isEqual(currentCodes, reqCodes)) {
                     currentCodes = reqCodes;
-                    //module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
+                    module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
                 }
                 //getCalendars();
             })
