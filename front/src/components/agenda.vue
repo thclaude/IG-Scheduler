@@ -1,5 +1,8 @@
 <template>
   <v-container fluid class="text-center">
+    <v-alert v-if="loadingError" text type="error" class="mt-5 mb-5">Une erreur s'est produite lors de la récupération des
+      informations, veuillez rafraîchir la page ou réessayer plus tard.
+    </v-alert>
     <v-layout row wrap justify-center>
       <v-col sm="5" xl="4" md="4">
         <v-select
@@ -20,7 +23,7 @@
             hide-details
             outlined
             dense
-            :disabled="!selection.bloc"
+            :disabled="!selection.bloc || loadingError"
             @change="getEvents"
         ></v-select>
       </v-col>
@@ -169,25 +172,35 @@ export default {
       },],
       groups: []
     },
-    weekdays: [1, 2, 3, 4, 5, 6, 0]
+    weekdays: [1, 2, 3, 4, 5, 6, 0],
+    loadingError: false
   }),
   methods: {
     async getGroups() {
       this.selection.group = '';
       this.calendarLoading = true;
       this.boilerplate = true;
-      axios.get(`https://iesn.thibaultclaude.be/api/groups/${this.selection.bloc}`)
+      this.loadingError = false;
+      axios.get(`https://iesn.thibaultclaude.fr/api/groups/${this.selection.bloc}`)
           .then(result => {
             this.data.groups = result.data;
           })
+        .catch(() => {
+            this.loadingError = true;
+        })
     },
     getEvents() {
       this.boilerplate = false;
       this.calendarLoading = true;
-      axios.get(`https://iesn.thibaultclaude.be/api/calendar/${this.selection.group}`)
+      this.loadingError = false;
+      axios.get(`https://iesn.thibaultclaude.fr/api/calendar/${this.selection.group}`)
           .then(result => {
             this.data.events = result.data;
             this.calendarLoading = false;
+          })
+          .catch(() => {
+            this.loadingError = true;
+            this.boilerplate = true;
           })
     },
     viewDay({date}) {

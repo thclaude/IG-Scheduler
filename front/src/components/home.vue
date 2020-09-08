@@ -26,8 +26,10 @@
       <router-link to="/help" class="text-decoration-none">Help</router-link>
       !
     </v-alert>
-    <v-form>
-      <v-expansion-panels accordion focusable flat hover v-model="showAccordion">
+    <v-alert v-if="loadingError" text type="error" class="mt-5 mb-5">Une erreur s'est produite lors de la récupération des
+      informations, veuillez rafraîchir la page ou réessayer plus tard.
+    </v-alert>
+      <v-expansion-panels accordion focusable flat hover v-model="showAccordion" :disabled="loadingError">
         <v-expansion-panel>
           <v-expansion-panel-header>Bloc 1</v-expansion-panel-header>
           <v-expansion-panel-content>
@@ -127,12 +129,12 @@
                   clearable
                   @input="searchInput=null"
                   :search-input.sync="searchInput"
-                  v-if="!searchInput"
               >
                 <v-list-item
                     slot="prepend-item"
                     ripple
                     @click="toggleCours2"
+                    v-if="!searchInput"
                 >
                   <v-list-item-action>
                     <v-icon>{{ iconSelected(selection.classes.bloc2, data.classes.bloc2) }}</v-icon>
@@ -245,12 +247,12 @@
             class="mr-4"
             depressed
             @click="generateURL"
+            :disabled="!checkGroupsNotEmpty || loadingError"
         >
           <v-icon>mdi-link-variant</v-icon>
           Générer le lien
         </v-btn>
       </v-row>
-    </v-form>
     <v-scroll-y-reverse-transition>
       <v-row justify="center" align="center" v-if="urlGenerated">
         <v-col sm="9" xl="11" md="11">
@@ -338,6 +340,7 @@ export default {
           bloc3: []
         }
       },
+      loadingError: false,
       urlGenerated: "",
       showConfirmTiptool: false,
       showToast: false,
@@ -346,12 +349,16 @@ export default {
     }
   },
   async created() {
-    this.data.groups.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/1')).data
-    this.data.groups.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/2')).data
-    this.data.groups.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/3')).data
-    this.data.classes.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/1')).data
-    this.data.classes.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/2')).data
-    this.data.classes.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/3')).data
+    try{
+      this.data.groups.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/1')).data
+      this.data.groups.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/2')).data
+      this.data.groups.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/3')).data
+      this.data.classes.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/1')).data
+      this.data.classes.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/2')).data
+      this.data.classes.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/3')).data
+    }catch(e){
+      this.loadingError = true;
+    }
   },
   computed: {
     selectedAllOptions() {
