@@ -1,8 +1,6 @@
 const credentials = require('./credentials.json');
 const axios = require('axios');
-const blocs = require('./blocs.json');
 const _ = require('lodash');
-const path = require('path');
 const fs = require('fs');
 
 const axiosPortailLog = axios.create({
@@ -21,7 +19,7 @@ module.exports = {
         module.exports.updateClassesCodes(true);
     },
 
-    sendDiscordMessage: (message, isErr = true) =>{
+    sendDiscordMessage: (message, isErr = true) => {
         const discordMessage = {
             content: isErr ? `<@${credentials.idDiscord}>` : "",
             avatar_url: "https://portail.henallux.be/favicon-96x96.png",
@@ -53,11 +51,11 @@ module.exports = {
             .then(res => {
                 let reqCodes = JSON.stringify(res);
 
-                if(!_.isEqual(currentCodes, reqCodes)){
+                if (!_.isEqual(currentCodes, reqCodes)) {
                     currentCodes = reqCodes;
-                    //module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
+                    module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
                 }
-                getCalendars();
+                //getCalendars();
             })
             .catch(err => {
                 module.exports.sendDiscordMessage("Error when searching codes " + err);
@@ -81,7 +79,7 @@ const searchClassesCodes = () => {
             let resBlocsID = await axiosPortailLog.get('classes/orientation_and_implantation/6/1', {
                 transformResponse: [function (data) {
                     let jsonData = JSON.parse(data);
-                    return jsonData.data.map(item => item.id)
+                    return jsonData.data.map(item => item.id);
                 }]
             });
 
