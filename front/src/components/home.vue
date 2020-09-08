@@ -295,8 +295,16 @@
 import axios from 'axios';
 
 export default {
-  title: 'Accueil',
   name: "home",
+  metaInfo: {
+    title: 'Accueil',
+    meta: [
+      {
+        property: 'og:title',
+        content: 'Accueil - IESN Scheduler',
+      }
+    ]
+  },
   data() {
     return {
       showAccordion: null,

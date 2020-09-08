@@ -24,6 +24,24 @@
 <script>
 export default {
   name: 'App',
+  metaInfo: {
+    title: 'IESN Scheduler',
+    titleTemplate: '%s | IESN Scheduler',
+    meta: [
+      {
+        property: 'og:url',
+        content: 'https://iesn.thibaultclaude.be',
+      },
+      {
+        property: 'og:description',
+        content: 'Génération de calendrier personnalisé et visualisation d\'horaire pour la section IG de l\'IESN à Namur.',
+      },
+      {
+        property: 'og:image',
+        content: 'https://iesn.thibaultclaude.be/images/favicon.ico',
+      }
+    ]
+  },
   computed: {
     getLastDayOfMonth() {
       const today = new Date();

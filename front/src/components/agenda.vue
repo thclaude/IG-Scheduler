@@ -126,8 +126,16 @@
 import axios from "axios";
 
 export default {
-  title: 'Agenda',
-  name: "calendar",
+  name: "agenda",
+  metaInfo: {
+    title: 'Agenda',
+    meta: [
+      {
+        property: 'og:title',
+        content: 'Agenda - IESN Scheduler',
+      }
+    ],
+  },
   data: () => ({
     focus: '',
     type: 'month',
