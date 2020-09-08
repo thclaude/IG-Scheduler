@@ -18,7 +18,8 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  routes
+  routes,
+  mode: "history" // Virer le #
 })
 
 Vue.mixin(titleMixin);
