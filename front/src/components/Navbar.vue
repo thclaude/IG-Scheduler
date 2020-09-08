@@ -8,7 +8,7 @@
   >
     <Logo />
 
-    <v-spacer></v-spacer>
+    <v-spacer v-if="$vuetify.breakpoint.xsOnly"></v-spacer>
     <div v-if="!$vuetify.breakpoint.xsOnly">
       <v-btn
           v-for="link in links"
