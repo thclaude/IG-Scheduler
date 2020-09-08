@@ -70,9 +70,9 @@ router.get('/', function (req, res, next) {
         - Sinon, on parcours la liste des cours sélectionnés et on les ajoute
  */
 function fillCourses(course1, course2, course3) {
-    if (isBloc1) addCourse(course1,1);
-    if (isBloc2) addCourse(course2,2);
-    if (isBloc3) addCourse(course3,3);
+    if (isBloc1) addCourse(course1, 1);
+    if (isBloc2) addCourse(course2, 2);
+    if (isBloc3) addCourse(course3, 3);
 }
 
 /*
@@ -88,7 +88,7 @@ function cleanCourses(course) {
     }
     let codeCourse = course.text.substring(0, 5); // On chope l'ID du cours
     let languageOption;
-    if(languagesCourses.includes(codeCourse)){
+    if (languagesCourses.includes(codeCourse)) {
         languageOption = cleanLanguageCourse(course.text)
     }
     return (courses.some(c => codeCourse === c) || codeCourse.substring(0, 2).toUpperCase() !== 'IG') && !coreCourse && !languageOption; // On check si le cours est dans la liste de cours choisis (OU si il ne commence pas par un code, ex Team Building) et que ce n'est pas un cours commun (déjà ajouté)
@@ -100,13 +100,13 @@ function cleanCoursesDataOption(course) {
     return cleanCourses(course) && !mobileWebCourses.includes(codeCourse);
 }
 
-function blocsDetermine(classes){
+function blocsDetermine(classes) {
     isBloc1 = classes.some(classe => classe.substring(0, 1) === '1');
     isBloc2 = classes.some(classe => classe.substring(0, 1) === '2');
     isBloc3 = classes.some(classe => classe.substring(0, 1) === '3');
 }
 
-function addCourse(courseParams, blocNum){
+function addCourse(courseParams, blocNum) {
     if (!courseParams || courseParams.includes("all")) {
         for (let bloc of Object.values(blocs[blocNum])) {
             courses.push("IG" + bloc);
@@ -118,22 +118,22 @@ function addCourse(courseParams, blocNum){
     }
 }
 
-function cleanLanguageCourse(course){
+function cleanLanguageCourse(course) {
     let stringMatch = course.substring(6).match(patternCourse)[0];
     stringMatch = stringMatch.substring(0, --stringMatch.length);
     let returnValue;
-    if(langOpt2){
-        if(langOpt2.includes('ALNL')){
+    if (langOpt2) {
+        if (langOpt2.includes('ALNL')) {
             returnValue = labelEN.includes(stringMatch)
-        }else{
+        } else {
             returnValue = labelALNL.includes(stringMatch)
         }
     }
 
-    if(langOpt3){
-        if(langOpt3.includes('ALNL')){
+    if (langOpt3) {
+        if (langOpt3.includes('ALNL')) {
             returnValue = labelEN.includes(stringMatch)
-        }else{
+        } else {
             returnValue = labelALNL.includes(stringMatch)
         }
     }

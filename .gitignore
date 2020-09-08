@@ -2,7 +2,7 @@ node_modules
 ErrorView
 log/*
 credentials.json
-/back/db-init.js
+back/calendars/db-init.js
 .DS_Store
 dist
 calendars
@@ -27,3 +27,4 @@ pnpm-debug.log*
 *.sw?
 
 /back/routes/calendar_with_cache.js
+/back/db-init.js

@@ -21,7 +21,7 @@ module.exports = () => {
                             if (course.start && course.end) {
                                 let codeCourse = course.text.substring(0, 5);
                                 let isIGCourseCode = igCourseCode.test(codeCourse)
-                                if(!actualCourses.includes(codeCourse) && isIGCourseCode)
+                                if (!actualCourses.includes(codeCourse) && isIGCourseCode)
                                     actualCourses.push(codeCourse);
                                 tempData.push({
                                     color: isIGCourseCode ? colors[actualCourses.indexOf(codeCourse)] : 'red',
@@ -35,7 +35,7 @@ module.exports = () => {
                         }
                         resolve(tempData);
                     })
-                    .catch(err =>{
+                    .catch(err => {
                         console.log(err);
                         reject(err);
                     })
