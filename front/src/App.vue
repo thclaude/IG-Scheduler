@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Navbar />
+    <Navbar/>
     <v-main>
       <v-alert
           prominent
@@ -10,40 +10,35 @@
           v-if="isLastFridayOfMonth">
         <strong>Avertissement - Maintenance Henallux</strong>
         <br/>
-        Aujourd'hui, comme tous les derniers vendredis du mois, a lieu une maintenance du système informatique Henallux.<br/>La génération de calendrier sera perturbée le temps de cette maintenance.
+        Aujourd'hui, comme tous les derniers vendredis du mois, a lieu une maintenance du système informatique Henallux.<br/>La
+        génération de calendrier sera perturbée le temps de cette maintenance.
       </v-alert>
       <v-container fluid class="main-container">
         <router-view/>
       </v-container>
     </v-main>
-    <Footer />
+    <Footer/>
   </v-app>
 </template>
 
 <script>
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
 export default {
   name: 'App',
-  components: {
-    Navbar,
-    Footer
-  },
   computed: {
     getLastDayOfMonth() {
       const today = new Date();
-      return new Date(today.getFullYear(), today.getMonth()+1, 0);
+      return new Date(today.getFullYear(), today.getMonth() + 1, 0);
     },
 
-    getLastFridayOfMonth(){
+    getLastFridayOfMonth() {
       let lastDayOfMonth = this.getLastDayOfMonth;
-      while(lastDayOfMonth.getDay() !== 5){
+      while (lastDayOfMonth.getDay() !== 5) {
         lastDayOfMonth.setDate(lastDayOfMonth.getDate() - 1);
       }
       return lastDayOfMonth;
     },
 
-    isLastFridayOfMonth(){
+    isLastFridayOfMonth() {
       const today = new Date();
       const lastFriday = this.getLastFridayOfMonth;
       return today.getDate() === lastFriday.getDate();
@@ -53,7 +48,7 @@ export default {
 </script>
 
 <style scoped>
-.main-container{
+.main-container {
   max-width: 1140px;
   width: 100%;
 }

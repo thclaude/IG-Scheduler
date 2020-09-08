@@ -1,5 +1,5 @@
 <template>
-  <v-footer dark padless app absolute >
+  <v-footer dark padless app absolute>
     <v-row
         justify="center"
         no-gutters
@@ -27,7 +27,7 @@
 
 <script>
 export default {
-name: "Footer"
+  name: "Footer"
 }
 </script>
 

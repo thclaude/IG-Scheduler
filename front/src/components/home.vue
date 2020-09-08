@@ -89,147 +89,152 @@
             </v-skeleton-loader>
           </v-expansion-panel-content>
         </v-expansion-panel>
-        <v-expansion-panel >
+        <v-expansion-panel>
           <v-expansion-panel-header>Bloc 2</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-skeleton-loader
                 :loading="data.groups.bloc2.length === 0"
                 type="card-heading"
             >
-            <v-select
-                multiple
-                chips
-                deletable-chips
-                persistent-hint
-                hint="Choisis ton/tes groupes"
-                v-model="selection.groups.bloc2"
-                label="Groupe"
-                :items="data.groups.bloc2"
-                prepend-inner-icon="mdi-account-group"
-            />
+              <v-select
+                  multiple
+                  chips
+                  deletable-chips
+                  persistent-hint
+                  hint="Choisis ton/tes groupes"
+                  v-model="selection.groups.bloc2"
+                  label="Groupe"
+                  :items="data.groups.bloc2"
+                  prepend-inner-icon="mdi-account-group"
+              />
             </v-skeleton-loader>
             <v-skeleton-loader
                 :loading="data.classes.bloc2.length === 0"
                 type="card-heading"
             >
-            <v-autocomplete
-                multiple
-                chips
-                :small-chips="selection.classes.bloc2.length > 5"
-                deletable-chips
-                persistent-hint
-                hint="Choisis ton/tes cours"
-                v-model="selection.classes.bloc2"
-                label="Cours"
-                :items="data.classes.bloc2"
-                prepend-inner-icon="mdi-school-outline"
-                class="mt-5"
-                clearable
-                @input="searchInput=null"
-                :search-input.sync="searchInput"
-                v-if="!searchInput"
-            >
-              <v-list-item
-                  slot="prepend-item"
-                  ripple
-                  @click="toggleCours2"
-              >
-                <v-list-item-action>
-                  <v-icon>{{ iconSelected(selection.classes.bloc2, data.classes.bloc2) }}</v-icon>
-                </v-list-item-action>
-                <v-list-item-title>{{ labelSelect(selection.classes.bloc2, data.classes.bloc2) }}</v-list-item-title>
-              </v-list-item>
-              <v-divider
-                  slot="prepend-item"
-                  class="mt-2"
+              <v-autocomplete
+                  multiple
+                  chips
+                  :small-chips="selection.classes.bloc2.length > 5"
+                  deletable-chips
+                  persistent-hint
+                  hint="Choisis ton/tes cours"
+                  v-model="selection.classes.bloc2"
+                  label="Cours"
+                  :items="data.classes.bloc2"
+                  prepend-inner-icon="mdi-school-outline"
+                  class="mt-5"
+                  clearable
+                  @input="searchInput=null"
+                  :search-input.sync="searchInput"
                   v-if="!searchInput"
-              />
-            </v-autocomplete>
-            <v-radio-group
-                row
-                prepend-icon="mdi-account-voice"
-                v-model="selection.lang.bloc2"
-                class="mt-5"
-                label="Seconde langue"
-                hint="Choisis ta 2ème langue"
-                persistent-hint
-                dense
-            >
-              <v-radio label="Anglais renforcement" value="EN2"></v-radio>
-              <v-radio label="Allemand / Néerlandais" value="ALNL2"></v-radio>
-            </v-radio-group>
+              >
+                <v-list-item
+                    slot="prepend-item"
+                    ripple
+                    @click="toggleCours2"
+                >
+                  <v-list-item-action>
+                    <v-icon>{{ iconSelected(selection.classes.bloc2, data.classes.bloc2) }}</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title>{{ labelSelect(selection.classes.bloc2, data.classes.bloc2) }}</v-list-item-title>
+                </v-list-item>
+                <v-divider
+                    slot="prepend-item"
+                    class="mt-2"
+                    v-if="!searchInput"
+                />
+              </v-autocomplete>
+              <v-radio-group
+                  row
+                  prepend-icon="mdi-account-voice"
+                  v-model="selection.lang.bloc2"
+                  class="mt-5"
+                  label="Seconde langue"
+                  hint="Choisis ta 2ème langue"
+                  persistent-hint
+                  dense
+              >
+                <v-radio label="Anglais renforcement" value="EN2"></v-radio>
+                <v-radio label="Allemand / Néerlandais" value="ALNL2"></v-radio>
+              </v-radio-group>
             </v-skeleton-loader>
           </v-expansion-panel-content>
         </v-expansion-panel>
-        <v-expansion-panel >
+        <v-expansion-panel>
           <v-expansion-panel-header>Bloc 3</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-skeleton-loader
                 :loading="data.groups.bloc3.length === 0"
                 type="card-heading"
             >
-            <v-select
-                multiple
-                chips
-                deletable-chips
-                persistent-hint
-                hint="Choisis ton/tes groupes"
-                v-model="selection.groups.bloc3"
-                label="Groupe"
-                :items="data.groups.bloc3"
-                prepend-inner-icon="mdi-account-group"
-            />
+              <v-select
+                  multiple
+                  chips
+                  deletable-chips
+                  persistent-hint
+                  hint="Choisis ton/tes groupes"
+                  v-model="selection.groups.bloc3"
+                  label="Groupe"
+                  :items="data.groups.bloc3"
+                  prepend-inner-icon="mdi-account-group"
+              />
             </v-skeleton-loader>
             <v-skeleton-loader
                 :loading="data.classes.bloc3.length === 0"
                 type="card-heading"
             >
-            <v-autocomplete
-                multiple
-                chips
-                :small-chips="selection.classes.bloc3.length > 5"
-                deletable-chips
-                persistent-hint
-                hint="Choisis ton/tes cours"
-                v-model="selection.classes.bloc3"
-                label="Cours"
-                :items="data.classes.bloc3"
-                prepend-inner-icon="mdi-school-outline"
-                class="mt-5"
-                clearable
-                @input="searchInput=null"
-                :search-input.sync="searchInput"
-            >
-              <v-list-item
-                  slot="prepend-item"
-                  ripple
-                  @click="toggleCours3"
-                  v-if="!searchInput"
+              <v-autocomplete
+                  multiple
+                  chips
+                  :small-chips="selection.classes.bloc3.length > 5"
+                  deletable-chips
+                  persistent-hint
+                  hint="Choisis ton/tes cours"
+                  v-model="selection.classes.bloc3"
+                  label="Cours"
+                  :items="data.classes.bloc3"
+                  prepend-inner-icon="mdi-school-outline"
+                  class="mt-5"
+                  clearable
+                  @input="searchInput=null"
+                  :search-input.sync="searchInput"
               >
-                <v-list-item-action>
-                  <v-icon>{{ iconSelected(selection.classes.bloc3, data.classes.bloc3.filter(cours => cours.value)) }}</v-icon>
-                </v-list-item-action>
-                <v-list-item-title>{{ labelSelect(selection.classes.bloc3, data.classes.bloc3.filter(cours => cours.value)) }}</v-list-item-title>
-              </v-list-item>
-              <v-divider
-                  slot="prepend-item"
-                  class="mt-2"
-                  v-if="!searchInput"
-              />
-            </v-autocomplete>
-            <v-radio-group
-                row
-                prepend-icon="mdi-account-voice"
-                v-model="selection.lang.bloc3"
-                class="mt-5"
-                label="Seconde langue"
-                hint="Choisis ta 2ème langue"
-                persistent-hint
-                dense
-            >
-              <v-radio label="Anglais renforcement" value="EN3"></v-radio>
-              <v-radio label="Allemand / Néerlandais" value="ALNL3"></v-radio>
-            </v-radio-group>
+                <v-list-item
+                    slot="prepend-item"
+                    ripple
+                    @click="toggleCours3"
+                    v-if="!searchInput"
+                >
+                  <v-list-item-action>
+                    <v-icon>{{
+                        iconSelected(selection.classes.bloc3, data.classes.bloc3.filter(cours => cours.value))
+                      }}
+                    </v-icon>
+                  </v-list-item-action>
+                  <v-list-item-title>
+                    {{ labelSelect(selection.classes.bloc3, data.classes.bloc3.filter(cours => cours.value)) }}
+                  </v-list-item-title>
+                </v-list-item>
+                <v-divider
+                    slot="prepend-item"
+                    class="mt-2"
+                    v-if="!searchInput"
+                />
+              </v-autocomplete>
+              <v-radio-group
+                  row
+                  prepend-icon="mdi-account-voice"
+                  v-model="selection.lang.bloc3"
+                  class="mt-5"
+                  label="Seconde langue"
+                  hint="Choisis ta 2ème langue"
+                  persistent-hint
+                  dense
+              >
+                <v-radio label="Anglais renforcement" value="EN3"></v-radio>
+                <v-radio label="Allemand / Néerlandais" value="ALNL3"></v-radio>
+              </v-radio-group>
             </v-skeleton-loader>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -249,7 +254,8 @@
     <v-scroll-y-reverse-transition>
       <v-row justify="center" align="center" v-if="urlGenerated">
         <v-col sm="9" xl="11" md="11">
-          <v-text-field id="urlGenerated" v-model="urlGenerated" readonly persistent-hint hint="URL Générée" prepend-inner-icon="mdi-link-variant" full-width>
+          <v-text-field id="urlGenerated" v-model="urlGenerated" readonly persistent-hint hint="URL Générée"
+                        prepend-inner-icon="mdi-link-variant" full-width>
           </v-text-field>
         </v-col>
         <v-col cols="auto">
@@ -260,7 +266,9 @@
                   <v-btn v-bind="attrs"
                          v-on="{...tooltipSuccess, ...attrs}"
                          @click="confirmCopyTooltip"
-                         text><v-icon>mdi-content-copy</v-icon></v-btn>
+                         text>
+                    <v-icon>mdi-content-copy</v-icon>
+                  </v-btn>
                 </template>
                 <span>Clique ici pour copier Gilles</span>
               </v-tooltip>
@@ -277,13 +285,15 @@
         timeout="2000"
         text
     >
-      <v-icon :color="toast.color">{{ toast.icon }}</v-icon> {{ toast.text }}
+      <v-icon :color="toast.color">{{ toast.icon }}</v-icon>
+      {{ toast.text }}
     </v-snackbar>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios';
+
 export default {
   title: 'Accueil',
   name: "home",
@@ -359,10 +369,10 @@ export default {
           return "Tout désélectionner"
       }
     },
-    checkGroupsNotEmpty(){
+    checkGroupsNotEmpty() {
       return this.selection.groups.bloc1.length !== 0 || this.selection.groups.bloc2.length !== 0 || this.selection.groups.bloc3.length !== 0;
     },
-    getLanguagesArray(){
+    getLanguagesArray() {
       return (groups) => {
         let languages = [];
         if (this.selection.lang.bloc2 && groups.filter(group => group.charAt(0) === '2').length > 0)
@@ -372,7 +382,7 @@ export default {
         return languages;
       }
     },
-    getFullParamsURL(){
+    getFullParamsURL() {
       return (obj) => {
         /*
         Parcours des cours sélectionnés pour la génération des String pour les paramètres URL
@@ -430,23 +440,23 @@ export default {
         }
       })
     },
-    confirmCopyTooltip(){
+    confirmCopyTooltip() {
       this.showConfirmTiptool = true;
-      if(navigator.clipboard){
+      if (navigator.clipboard) {
         navigator.clipboard.writeText(this.urlGenerated);
-      }else{
+      } else {
         const input = document.getElementById('urlGenerated');
         input.focus();
         input.select();
         document.execCommand('copy');
       }
-      setTimeout(()=>{
+      setTimeout(() => {
         this.showConfirmTiptool = false
-      },1000);
+      }, 1000);
     },
-    generateURL(){
+    generateURL() {
       this.showAccordion = false;
-      if(!this.checkGroupsNotEmpty){
+      if (!this.checkGroupsNotEmpty) {
         this.toast = {
           text: "Aucun groupe n'a été sélectionné",
           color: 'error',
@@ -454,7 +464,7 @@ export default {
         }
         this.showToast = true;
         this.urlGenerated = '';
-      }else{
+      } else {
         const mergedGroups = this.selection.groups.bloc1.concat(this.selection.groups.bloc2).concat(this.selection.groups.bloc3)
         let generatedObject = {
           classes: this.selection.classes.bloc1.concat(this.selection.classes.bloc2).concat(this.selection.classes.bloc3),
