@@ -8,12 +8,12 @@
 
 <script>
 export default {
-name: "Logo"
+  name: "Logo"
 }
 </script>
 
 <style scoped>
-#logoText{
+#logoText {
   margin-bottom: 0;
   padding-top: .3125rem;
   padding-bottom: .3125rem;
