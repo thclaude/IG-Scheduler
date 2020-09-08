@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import VueRouter from 'vue-router';
-import titleMixin from './mixins/title';
+import VueMeta from 'vue-meta';
 
 const home = () => import('@/components/home')
 const help = () => import('@/components/help')
@@ -40,9 +40,9 @@ const router = new VueRouter({
     mode: "history" // Virer le #
 })
 
-Vue.mixin(titleMixin);
 Vue.use(VueRouter);
-Vue.config.productionTip = false
+Vue.use(VueMeta);
+Vue.config.productionTip = false;
 
 new Vue({
     vuetify,

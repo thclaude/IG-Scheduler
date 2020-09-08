@@ -53,7 +53,15 @@
 <script>
 export default {
   name: "help",
-  title: 'Aide',
+  metaInfo: {
+    title: 'Aide',
+    meta: [
+      {
+        property: 'og:title',
+        content: 'Aide - IESN Scheduler',
+      }
+    ]
+  },
   data() {
     return {
       tabGoogle: null,
