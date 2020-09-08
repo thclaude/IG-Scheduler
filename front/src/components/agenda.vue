@@ -127,14 +127,16 @@ import axios from "axios";
 
 export default {
   name: "agenda",
-  metaInfo: {
-    title: 'Agenda',
-    meta: [
-      {
-        property: 'og:title',
-        content: 'Agenda - IESN Scheduler',
-      }
-    ],
+  metaInfo() {
+    return {
+      title: 'Agenda',
+      meta: [
+        {
+          property: 'og:title',
+          content: 'Agenda - IESN Scheduler',
+        }
+      ],
+    }
   },
   data: () => ({
     focus: '',

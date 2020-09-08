@@ -296,14 +296,16 @@ import axios from 'axios';
 
 export default {
   name: "home",
-  metaInfo: {
-    title: 'Accueil',
-    meta: [
-      {
-        property: 'og:title',
-        content: 'Accueil - IESN Scheduler',
-      }
-    ]
+  metaInfo() {
+    return {
+      title: 'Accueil',
+      meta: [
+        {
+          property: 'og:title',
+          content: 'Accueil - IESN Scheduler',
+        }
+      ]
+    }
   },
   data() {
     return {

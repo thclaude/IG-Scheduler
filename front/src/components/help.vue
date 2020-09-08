@@ -53,14 +53,16 @@
 <script>
 export default {
   name: "help",
-  metaInfo: {
-    title: 'Aide',
-    meta: [
-      {
-        property: 'og:title',
-        content: 'Aide - IESN Scheduler',
-      }
-    ]
+  metaInfo() {
+    return {
+      title: 'Aide',
+      meta: [
+        {
+          property: 'og:title',
+          content: 'Aide - IESN Scheduler',
+        }
+      ]
+    }
   },
   data() {
     return {
