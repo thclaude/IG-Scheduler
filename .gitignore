@@ -6,6 +6,7 @@ back/calendars/db-init.js
 .DS_Store
 dist
 calendars
+frontNuxt
 
 # local env files
 .env.local
