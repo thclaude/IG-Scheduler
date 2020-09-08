@@ -32,7 +32,7 @@
           <v-expansion-panel-header>Bloc 1</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-skeleton-loader
-                :loading="groupsBloc1.length === 0"
+                :loading="data.groups.bloc1.length === 0"
                 type="card-heading"
             >
               <v-select
@@ -41,28 +41,28 @@
                   deletable-chips
                   persistent-hint
                   hint="Choisis ton/tes groupes"
-                  v-model="selectedGroups"
+                  v-model="selection.groups.bloc1"
                   label="Groupe"
-                  :items="groupsBloc1"
+                  :items="data.groups.bloc1"
                   prepend-inner-icon="mdi-account-group"
                   clearable
               >
               </v-select>
             </v-skeleton-loader>
             <v-skeleton-loader
-                :loading="classesBloc1.length === 0"
+                :loading="data.classes.bloc1.length === 0"
                 type="card-heading"
             >
               <v-autocomplete
                   multiple
                   chips
-                  :small-chips="selectedClassesBloc1.length > 5"
+                  :small-chips="selection.classes.bloc1.length > 5"
                   deletable-chips
                   persistent-hint
                   hint="Choisis ton/tes cours"
-                  v-model="selectedClassesBloc1"
+                  v-model="selection.classes.bloc1"
                   label="Cours"
-                  :items="classesBloc1"
+                  :items="data.classes.bloc1"
                   prepend-inner-icon="mdi-school-outline"
                   class="mt-5"
                   clearable
@@ -76,9 +76,9 @@
                     v-if="!searchInput"
                 >
                   <v-list-item-action>
-                    <v-icon>{{ iconSelected(selectedClassesBloc1, classesBloc1) }}</v-icon>
+                    <v-icon>{{ iconSelected(selection.classes.bloc1, data.classes.bloc1) }}</v-icon>
                   </v-list-item-action>
-                  <v-list-item-title>{{ labelSelect(selectedClassesBloc1, classesBloc1) }}</v-list-item-title>
+                  <v-list-item-title>{{ labelSelect(selection.classes.bloc1, data.classes.bloc1) }}</v-list-item-title>
                 </v-list-item>
                 <v-divider
                     slot="prepend-item"
@@ -93,7 +93,7 @@
           <v-expansion-panel-header>Bloc 2</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-skeleton-loader
-                :loading="groupsBloc2.length === 0"
+                :loading="data.groups.bloc2.length === 0"
                 type="card-heading"
             >
             <v-select
@@ -102,26 +102,26 @@
                 deletable-chips
                 persistent-hint
                 hint="Choisis ton/tes groupes"
-                v-model="selectedGroups"
+                v-model="selection.groups.bloc2"
                 label="Groupe"
-                :items="groupsBloc2"
+                :items="data.groups.bloc2"
                 prepend-inner-icon="mdi-account-group"
             />
             </v-skeleton-loader>
             <v-skeleton-loader
-                :loading="classesBloc2.length === 0"
+                :loading="data.classes.bloc2.length === 0"
                 type="card-heading"
             >
             <v-autocomplete
                 multiple
                 chips
-                :small-chips="selectedClassesBloc2.length > 5"
+                :small-chips="selection.classes.bloc2.length > 5"
                 deletable-chips
                 persistent-hint
                 hint="Choisis ton/tes cours"
-                v-model="selectedClassesBloc2"
+                v-model="selection.classes.bloc2"
                 label="Cours"
-                :items="classesBloc2"
+                :items="data.classes.bloc2"
                 prepend-inner-icon="mdi-school-outline"
                 class="mt-5"
                 clearable
@@ -135,9 +135,9 @@
                   @click="toggleCours2"
               >
                 <v-list-item-action>
-                  <v-icon>{{ iconSelected(selectedClassesBloc2, classesBloc2) }}</v-icon>
+                  <v-icon>{{ iconSelected(selection.classes.bloc2, data.classes.bloc2) }}</v-icon>
                 </v-list-item-action>
-                <v-list-item-title>{{ labelSelect(selectedClassesBloc2, classesBloc2) }}</v-list-item-title>
+                <v-list-item-title>{{ labelSelect(selection.classes.bloc2, data.classes.bloc2) }}</v-list-item-title>
               </v-list-item>
               <v-divider
                   slot="prepend-item"
@@ -148,7 +148,7 @@
             <v-radio-group
                 row
                 prepend-icon="mdi-account-voice"
-                v-model="selectedLangBloc2"
+                v-model="selection.lang.bloc2"
                 class="mt-5"
                 label="Seconde langue"
                 hint="Choisis ta 2ème langue"
@@ -165,7 +165,7 @@
           <v-expansion-panel-header>Bloc 3</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-skeleton-loader
-                :loading="groupsBloc3.length === 0"
+                :loading="data.groups.bloc3.length === 0"
                 type="card-heading"
             >
             <v-select
@@ -174,26 +174,26 @@
                 deletable-chips
                 persistent-hint
                 hint="Choisis ton/tes groupes"
-                v-model="selectedGroups"
+                v-model="selection.groups.bloc3"
                 label="Groupe"
-                :items="groupsBloc3"
+                :items="data.groups.bloc3"
                 prepend-inner-icon="mdi-account-group"
             />
             </v-skeleton-loader>
             <v-skeleton-loader
-                :loading="classesBloc3.length === 0"
+                :loading="data.classes.bloc3.length === 0"
                 type="card-heading"
             >
             <v-autocomplete
                 multiple
                 chips
-                :small-chips="selectedClassesBloc3.length > 5"
+                :small-chips="selection.classes.bloc3.length > 5"
                 deletable-chips
                 persistent-hint
                 hint="Choisis ton/tes cours"
-                v-model="selectedClassesBloc3"
+                v-model="selection.classes.bloc3"
                 label="Cours"
-                :items="classesBloc3"
+                :items="data.classes.bloc3"
                 prepend-inner-icon="mdi-school-outline"
                 class="mt-5"
                 clearable
@@ -207,9 +207,9 @@
                   v-if="!searchInput"
               >
                 <v-list-item-action>
-                  <v-icon>{{ iconSelected(selectedClassesBloc3, classesBloc3.filter(cours => cours.value)) }}</v-icon>
+                  <v-icon>{{ iconSelected(selection.classes.bloc3, data.classes.bloc3.filter(cours => cours.value)) }}</v-icon>
                 </v-list-item-action>
-                <v-list-item-title>{{ labelSelect(selectedClassesBloc3, classesBloc3.filter(cours => cours.value)) }}</v-list-item-title>
+                <v-list-item-title>{{ labelSelect(selection.classes.bloc3, data.classes.bloc3.filter(cours => cours.value)) }}</v-list-item-title>
               </v-list-item>
               <v-divider
                   slot="prepend-item"
@@ -220,7 +220,7 @@
             <v-radio-group
                 row
                 prepend-icon="mdi-account-voice"
-                v-model="selectedLangBloc3"
+                v-model="selection.lang.bloc3"
                 class="mt-5"
                 label="Seconde langue"
                 hint="Choisis ta 2ème langue"
@@ -253,7 +253,7 @@
           </v-text-field>
         </v-col>
         <v-col cols="auto">
-          <v-tooltip right v-model="showConfirmTiptool">
+          <v-tooltip bottom v-model="showConfirmTiptool">
             <template v-slot:activator="{ on: tooltipSuccess }">
               <v-tooltip right>
                 <template v-slot:activator="{ on: attrs }">
@@ -273,10 +273,11 @@
 
     <v-snackbar
         v-model="showToast"
-        :color="colorToast"
+        :color="toast.color"
         timeout="2000"
+        text
     >
-      {{ textToast }}
+      <v-icon :color="toast.color">{{ toast.icon }}</v-icon> {{ toast.text }}
     </v-snackbar>
   </v-container>
 </template>
@@ -289,33 +290,48 @@ export default {
   data() {
     return {
       showAccordion: null,
-      selectedGroups: [],
-      selectedClassesBloc1: [],
-      selectedClassesBloc2: [],
-      selectedClassesBloc3: [],
-      selectedLangBloc2: '',
-      selectedLangBloc3: '',
+      selection: {
+        groups: {
+          bloc1: [],
+          bloc2: [],
+          bloc3: []
+        },
+        classes: {
+          bloc1: [],
+          bloc2: [],
+          bloc3: []
+        },
+        lang: {
+          bloc2: '',
+          bloc3: ''
+        }
+      },
+      data: {
+        groups: {
+          bloc1: [],
+          bloc2: [],
+          bloc3: []
+        },
+        classes: {
+          bloc1: [],
+          bloc2: [],
+          bloc3: []
+        }
+      },
       urlGenerated: "",
       showConfirmTiptool: false,
       showToast: false,
-      textToast: '',
-      colorToast: '',
-      groupsBloc1: [],
-      groupsBloc2: [],
-      groupsBloc3: [],
-      classesBloc1: [],
-      classesBloc2: [],
-      classesBloc3: [],
+      toast: {text: '', color: '', icon: ''},
       searchInput: null
     }
   },
   async created() {
-    this.groupsBloc1 = (await axios.get('http://192.168.0.3:8181/api/groups/1')).data
-    this.groupsBloc2 = (await axios.get('http://192.168.0.3:8181/api/groups/2')).data
-    this.groupsBloc3 = (await axios.get('http://192.168.0.3:8181/api/groups/3')).data
-    this.classesBloc1 = (await axios.get('http://192.168.0.3:8181/api/classes/1')).data
-    this.classesBloc2 = (await axios.get('http://192.168.0.3:8181/api/classes/2')).data
-    this.classesBloc3 = (await axios.get('http://192.168.0.3:8181/api/classes/3')).data
+    this.data.groups.bloc1 = (await axios.get('http://192.168.0.3:8181/api/groups/1')).data
+    this.data.groups.bloc2 = (await axios.get('http://192.168.0.3:8181/api/groups/2')).data
+    this.data.groups.bloc3 = (await axios.get('http://192.168.0.3:8181/api/groups/3')).data
+    this.data.classes.bloc1 = (await axios.get('http://192.168.0.3:8181/api/classes/1')).data
+    this.data.classes.bloc2 = (await axios.get('http://192.168.0.3:8181/api/classes/2')).data
+    this.data.classes.bloc3 = (await axios.get('http://192.168.0.3:8181/api/classes/3')).data
   },
   computed: {
     selectedAllOptions() {
@@ -344,15 +360,15 @@ export default {
       }
     },
     checkGroupsNotEmpty(){
-      return this.selectedGroups.length !== 0;
+      return this.selection.groups.bloc1.length !== 0 || this.selection.groups.bloc2.length !== 0 || this.selection.groups.bloc3.length !== 0;
     },
     getLanguagesArray(){
       return (groups) => {
         let languages = [];
-        if (this.selectedLangBloc2 && groups.filter(group => group.charAt(0) === '2').length > 0)
-          languages.push(this.selectedLangBloc2);
-        if (this.selectedLangBloc3 && groups.filter(group => group.charAt(0) === '3').length > 0)
-          languages.push(this.selectedLangBloc3);
+        if (this.selection.lang.bloc2 && groups.filter(group => group.charAt(0) === '2').length > 0)
+          languages.push(this.selection.lang.bloc2);
+        if (this.selection.lang.bloc3 && groups.filter(group => group.charAt(0) === '3').length > 0)
+          languages.push(this.selection.lang.bloc3);
         return languages;
       }
     },
@@ -389,28 +405,28 @@ export default {
   methods: {
     toggleCours1() {
       this.$nextTick(() => {
-        if (this.selectedAllOptions(this.selectedClassesBloc1, this.classesBloc1)) {
-          this.selectedClassesBloc1 = []
+        if (this.selectedAllOptions(this.selection.classes.bloc1, this.data.classes.bloc1)) {
+          this.selection.classes.bloc1 = []
         } else {
-          this.selectedClassesBloc1 = this.classesBloc1.slice()
+          this.selection.classes.bloc1 = this.data.classes.bloc1.slice()
         }
       })
     },
     toggleCours2() {
       this.$nextTick(() => {
-        if (this.selectedAllOptions(this.selectedClassesBloc2, this.classesBloc2)) {
-          this.selectedClassesBloc2 = []
+        if (this.selectedAllOptions(this.selection.classes.bloc2, this.data.classes.bloc2)) {
+          this.selection.classes.bloc2 = []
         } else {
-          this.selectedClassesBloc2 = this.classesBloc2.slice()
+          this.selection.classes.bloc2 = this.data.classes.bloc2.slice()
         }
       })
     },
     toggleCours3() {
       this.$nextTick(() => {
-        if (this.selectedAllOptions(this.selectedClassesBloc3, this.classesBloc3.filter(cours => cours.value))) {
-          this.selectedClassesBloc3 = []
+        if (this.selectedAllOptions(this.selection.classes.bloc3, this.data.classes.bloc3.filter(cours => cours.value))) {
+          this.selection.classes.bloc3 = []
         } else {
-          this.selectedClassesBloc3 = this.classesBloc3.filter(cours => cours.value).map(cours => cours.value).slice()
+          this.selection.classes.bloc3 = this.data.classes.bloc3.filter(cours => cours.value).map(cours => cours.value).slice()
         }
       })
     },
@@ -431,27 +447,34 @@ export default {
     generateURL(){
       this.showAccordion = false;
       if(!this.checkGroupsNotEmpty){
-        this.textToast = "Aucun groupe n'a été sélectionné";
-        this.colorToast = 'error';
+        this.toast = {
+          text: "Aucun groupe n'a été sélectionné",
+          color: 'error',
+          icon: 'mdi-alert-circle-outline'
+        }
         this.showToast = true;
         this.urlGenerated = '';
       }else{
+        const mergedGroups = this.selection.groups.bloc1.concat(this.selection.groups.bloc2).concat(this.selection.groups.bloc3)
         let generatedObject = {
-          classes: this.selectedClassesBloc1.concat(this.selectedClassesBloc2).concat(this.selectedClassesBloc3),
-          groups: this.selectedGroups,
-          languages: this.getLanguagesArray(this.selectedGroups),
-          allClassesBloc1: this.selectedClassesBloc1.length === this.classesBloc1.length,
+          classes: this.selection.classes.bloc1.concat(this.selection.classes.bloc2).concat(this.selection.classes.bloc3),
+          groups: mergedGroups,
+          languages: this.getLanguagesArray(mergedGroups),
+          allClassesBloc1: this.selection.classes.bloc1.length === this.data.classes.bloc1.length,
           //pas nécessaire de mettre crs1[] = all si aucun cours n'est sélectionné (en backend, si aucun cours sélectionné => tous les cours sont pris en charge
-          //allClassesBloc1: (this.selectedClassesBloc1.length === this.classesBloc1.length) || (this.selectedGroupsBloc.filter(group => group.charAt(0) === '1').length > 0 && this.selectedClassesBloc1.length === 0),
-          allClassesBloc2: this.selectedClassesBloc2.length === this.classesBloc2.length,
-          allClassesBloc3: this.selectedClassesBloc3.length === this.classesBloc3.filter(cours => cours.value).length
+          //allClassesBloc1: (this.selection.classes.bloc1.length === this.data.classes.bloc1.length) || (this.selectedGroupsBloc.filter(group => group.charAt(0) === '1').length > 0 && this.selection.classes.bloc1.length === 0),
+          allClassesBloc2: this.selection.classes.bloc2.length === this.data.classes.bloc2.length,
+          allClassesBloc3: this.selection.classes.bloc3.length === this.data.classes.bloc3.filter(cours => cours.value).length
         }
 
         const fullParams = this.getFullParamsURL(generatedObject);
         let baseURL = 'https://iesn.thibaultclaude.be/';
         this.urlGenerated = `${baseURL}calendar?${generatedObject.groups.map(group => `grp[]=${group}`).join('&')}${fullParams}`;
-        this.textToast = "URL générée avec succès";
-        this.colorToast = 'success';
+        this.toast = {
+          text: "URL générée avec succès",
+          color: 'success',
+          icon: 'mdi-checkbox-marked-circle-outline'
+        }
         this.showToast = true;
       }
     }
