@@ -181,7 +181,7 @@ export default {
       this.calendarLoading = true;
       this.boilerplate = true;
       this.loadingError = false;
-      axios.get(`https://iesn.thibaultclaude.fr/api/groups/${this.selection.bloc}`)
+      axios.get(`https://iesn.thibaultclaude.be/api/groups/${this.selection.bloc}`)
           .then(result => {
             this.data.groups = result.data;
           })
@@ -193,7 +193,7 @@ export default {
       this.boilerplate = false;
       this.calendarLoading = true;
       this.loadingError = false;
-      axios.get(`https://iesn.thibaultclaude.fr/api/calendar/${this.selection.group}`)
+      axios.get(`https://iesn.thibaultclaude.be/api/calendar/${this.selection.group}`)
           .then(result => {
             this.data.events = result.data;
             this.calendarLoading = false;
