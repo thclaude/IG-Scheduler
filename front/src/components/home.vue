@@ -252,6 +252,16 @@
           <v-icon>mdi-link-variant</v-icon>
           Générer le lien
         </v-btn>
+        <v-btn
+            color="orange lighten-2"
+            class="mr-4"
+            depressed
+            @click="clearData"
+            :disabled="noDataSelected || loadingError"
+        >
+          <v-icon>mdi-autorenew</v-icon>
+          Reset
+        </v-btn>
       </v-row>
     <v-scroll-y-reverse-transition>
       <v-row justify="center" align="center" v-if="urlGenerated">
@@ -389,6 +399,9 @@ export default {
     checkGroupsNotEmpty() {
       return this.selection.groups.bloc1.length !== 0 || this.selection.groups.bloc2.length !== 0 || this.selection.groups.bloc3.length !== 0;
     },
+    noDataSelected(){
+      return !this.checkGroupsNotEmpty && this.selection.classes.bloc1.length === 0 && this.selection.classes.bloc2.length === 0 && this.selection.classes.bloc3.length === 0 && this.selection.lang.bloc2 === '' && this.selection.lang.bloc3 === ''
+    },
     getLanguagesArray() {
       return (groups) => {
         let languages = [];
@@ -470,6 +483,24 @@ export default {
       setTimeout(() => {
         this.showConfirmTiptool = false
       }, 1000);
+    },
+    clearData(){
+      this.selection = {
+        groups: {
+          bloc1: [],
+          bloc2: [],
+          bloc3: []
+        },
+        classes: {
+          bloc1: [],
+          bloc2: [],
+          bloc3: []
+        },
+        lang: {
+          bloc2: '',
+          bloc3: ''
+        }
+      }
     },
     generateURL() {
       this.showAccordion = false;
