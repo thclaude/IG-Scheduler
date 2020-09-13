@@ -23,7 +23,7 @@
 ## Notes
 
 * Stock en local des blocs + A.A. + code dans le fichier `blocs.json`
-    - Possible de parse le site ([lien](https://services.henallux.be/paysage/public/cursus/infocursus/idCursus/6)) 
+    - Parse du site ([lien](https://services.henallux.be/paysage/public/cursus/infocursus/idCursus/6)) 
     
 ## Auteur
 
