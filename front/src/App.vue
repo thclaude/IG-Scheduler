@@ -13,6 +13,21 @@
         Aujourd'hui, comme tous les derniers vendredis du mois, a lieu une maintenance du système informatique Henallux.<br/>La
         génération de calendrier sera perturbée le temps de cette maintenance.
       </v-alert>
+
+      <v-alert
+          prominent
+          text
+          icon="mdi-calendar-sync-outline"
+          color="info"
+          class="mb-5 text-center">
+        <strong>Avertissement - MàJ Horaire Henallux</strong>
+        <br/>
+        L'Henallux a modifié l'affichage de ses horaires au début de cette année, ce qui a rendu la personnalisation de l'horaire obsolète.
+        <br/>
+        Une mise à jour a été déployée pour pallier ce problème. Cependant, il est possible que certains cours soient ajoutés dans ton horaire même si tu ne les as pas sélectionné.
+        <br/>
+        Si ça t'arrive, ça serait cool de m'envoyer un MP Discord (<strong>tiiBz#1337</strong>) pour que je règle ça au plus vite ! 😎
+      </v-alert>
       <v-container fluid class="main-container">
         <router-view/>
       </v-container>
