@@ -5,7 +5,7 @@ const ical = require("ical-generator");
 
 const patternDate = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const patternTitle = /Matière : ([a-zA-Z0-9-'ÉéèÈà_!:.\/ ()]*)([^\n]*\n+)+/;
-const blocPattern = /\[(\d) IG [A-Z]*]/
+const blocPattern = /\[(\d) IG [A-Z0-9]*]/
 
 const { cleanBlocs, allClassesLabels } = utils.getBlocInfosForCalendar()
 
