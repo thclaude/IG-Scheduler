@@ -333,12 +333,12 @@ export default {
   },
   async created() {
     try{
-      this.data.groups.bloc1 = (await axios.get('http://localhost:8181/api/groups/1')).data
-      this.data.groups.bloc2 = (await axios.get('http://localhost:8181/api/groups/2')).data
-      this.data.groups.bloc3 = (await axios.get('http://localhost:8181/api/groups/3')).data
-      this.data.classes.bloc1 = (await axios.get('http://localhost:8181/api/classes/1')).data
-      this.data.classes.bloc2 = (await axios.get('http://localhost:8181/api/classes/2')).data
-      this.data.classes.bloc3 = (await axios.get('http://localhost:8181/api/classes/3')).data
+      this.data.groups.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/1')).data
+      this.data.groups.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/2')).data
+      this.data.groups.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/3')).data
+      this.data.classes.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/1')).data
+      this.data.classes.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/2')).data
+      this.data.classes.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/3')).data
     }catch(e){
       this.loadingError = true;
     }
