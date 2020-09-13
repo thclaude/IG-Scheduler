@@ -2,6 +2,7 @@ const credentials = require('./credentials.json');
 const axios = require('axios');
 const _ = require('lodash');
 const fs = require('fs');
+const IGInfos = require('./IESN.json')
 
 const axiosPortailLog = axios.create({
     baseURL: 'https://portail.henallux.be/api/',
@@ -69,6 +70,50 @@ module.exports = {
 
     getAxiosPortailLog: () => {
         return axiosPortailLog;
+    },
+
+    getBlocInfosForVue: (blocNb) => {
+        const UEwithClasses = IGInfos['IG'][blocNb].filter(classe => classe.classes)
+        const UEWithoutClasses = IGInfos['IG'][blocNb].filter(classe => !classe.classes)
+
+        let finalArray = []
+        UEWithoutClasses.map(mapToVueObject).forEach(classe => finalArray.push(classe))
+
+        UEwithClasses.forEach(classe => {
+            finalArray.push({header: classe.displayName})
+            classe.classes.map(mapToVueObject).forEach(c => finalArray.push(c))
+        })
+
+        return finalArray
+    },
+
+    getBlocInfosForCalendar: () => {
+        let cleanBlocs = {
+            1: [],
+            2: [],
+            3: []
+        };
+        let allClassesLabels = [];
+        for(let i = 1; i <= 3; i++){
+            const UEwithClasses = IGInfos['IG'][i].filter(classe => classe.classes)
+            const UEWithoutClasses = IGInfos['IG'][i].filter(classe => !classe.classes)
+            UEWithoutClasses.map(mapToCalendar).forEach(classe => {
+                cleanBlocs[i].push(classe);
+                allClassesLabels.push(classe.displayName)
+            })
+
+            UEwithClasses.forEach(classe => {
+                classe.classes.map(mapToCalendar).forEach(c => {
+                    cleanBlocs[i].push(c);
+                    allClassesLabels.push(c.displayName)
+                })
+            })
+        }
+
+        return {
+            cleanBlocs,
+            allClassesLabels
+        }
     }
 };
 
@@ -100,6 +145,21 @@ const searchClassesCodes = () => {
             reject(e);
         }
     })
+}
+
+const mapToVueObject = (obj) => {
+    return {
+        text: obj.displayName,
+        value: obj.id
+    }
+}
+
+const mapToCalendar = (obj) => {
+    return {
+        displayName: obj.displayName,
+        completeName: obj.completeName,
+        id: obj.id
+    }
 }
 
 const getCalendars = () => {

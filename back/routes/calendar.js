@@ -1,16 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const utils = require('../utils.js');
-const blocs = require('../blocs.json');
 const ical = require("ical-generator");
-const mobileWebCourses = Array.from(require('../settings.json').webOptionCourses);
+
 const patternDate = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
-const patternTitle = /Matière : ([a-zA-Z0-9-'ÉéèÈà_!.\/ ()]*)([^\n]*\n+)+/;
-const patternCourse = /([a-zA-Zé /]+)/
-const dataIntelligenceGroupe = require('../settings.json').dataIntelligenceClasse;
-const languagesCourses = require('../settings.json').languagesCourses;
-const labelALNL = require('../settings.json').labelALNL;
-const labelEN = require('../settings.json').labelENRenfort;
+const patternTitle = /Matière : ([a-zA-Z0-9-'ÉéèÈà_!:.\/ ()]*)([^\n]*\n+)+/;
+const blocPattern = /\[(\d) IG [A-Z]*]/
+
+const { cleanBlocs, allClassesLabels } = utils.getBlocInfosForCalendar()
+
 const axiosPortailLog = utils.getAxiosPortailLog();
 
 let courses; /* Contiendra la liste des cours que l'utilisateur veut suivre */
@@ -18,19 +16,15 @@ let coreCourses; /* Contiendra les cours communs / déjà rencontrés pour ne pa
 let isBloc1; // L'utilisateur est du bloc 1
 let isBloc2; // L'utilisateur est du bloc 2
 let isBloc3; // L'utilisateur est du bloc 3
-let langOpt2;
-let langOpt3;
 
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
     coreCourses = new Set();
     courses = [];
-    langOpt2 = req.query.optl2;
-    langOpt3 = req.query.optl3;
 
     let classesCodes = utils.getCurrentCodes();
     let calendar = ical({name: "Cours", timezone: "Europe/Brussels"});
 
-    if (req.query.grp.every(group => Object.keys(classesCodes).includes(group))) { /* Check que les groupes existent bien dans le fichier JSON */
+    if (req.query.grp.every(group => Object.keys(classesCodes).includes(group))) { /* Check que les groupes existent bien */
         blocsDetermine(req.query.grp);
         fillCourses(req.query.crs1, req.query.crs2, req.query.crs3);
 
@@ -38,7 +32,7 @@ router.get('/', function (req, res, next) {
         axiosPortailLog.get(`plannings/promotion/${fetchURLParams}`, {
             transformResponse: [function (data) {
                 let jsonData = JSON.parse(data);
-                return req.query.grp.includes(dataIntelligenceGroupe) ? jsonData.filter(cleanCoursesDataOption) : jsonData.filter(cleanCourses) /* Si l'option est Data Intelligence, alors on enlève les cours de l'option web par défaut (merci henallux d'avoir bien fait les horaires)*/
+                return jsonData.filter(cleanCourses)
             }]
         })
             .then(response => {
@@ -82,23 +76,26 @@ function fillCourses(course1, course2, course3) {
  */
 function cleanCourses(course) {
     let transformedString = `${course.start}/${course.end}/${course.location}/${course.title}/${course.details}`; // On crée une chaîne uniquement
+
     let coreCourse = coreCourses.has(transformedString); // On regarde si notre Set a déjà cette chaine (=> cours qui a déjà été mis dans le calendrier)
     if (!coreCourse) {
         coreCourses.add(transformedString);
     }
-    let codeCourse = course.text.substring(0, 5); // On chope l'ID du cours
-    let languageOption;
-    if (languagesCourses.includes(codeCourse)) {
-        languageOption = cleanLanguageCourse(course.text)
+
+    let isCourse = patternTitle.test(course.details) && allClassesLabels.some(lbl => lbl === course.details.match(patternTitle)[1]); // Si les détails correspondent au pattern (Matière : xxxx) et que le titre est dans tous les labels connus
+    let addThisCourse = !isCourse; // Si c'est un cours connu alors on ne l'ajoute pas de suite
+
+    if(isCourse){
+        let label = course.details.match(patternTitle)[1];
+        let bloc = parseInt(course.text.match(blocPattern)[1]);
+        let foundCourse = cleanBlocs[bloc].filter(classe => classe.displayName === label)
+
+        addThisCourse = courses.some(c => c === foundCourse[0].id) // Si l'ID est présent, alors il sera affiché dans le calendrier
     }
-    return (courses.some(c => codeCourse === c) || codeCourse.substring(0, 2).toUpperCase() !== 'IG') && !coreCourse && !languageOption; // On check si le cours est dans la liste de cours choisis (OU si il ne commence pas par un code, ex Team Building) et que ce n'est pas un cours commun (déjà ajouté)
+
+    return addThisCourse && !coreCourse; // On check si le cours doit être ajouté et qu'il n'a pas déjà été ajouté
 }
 
-/* Enlève les cours de l'option Web dans l'horaire des Data*/
-function cleanCoursesDataOption(course) {
-    let codeCourse = course.text.substring(0, 5);
-    return cleanCourses(course) && !mobileWebCourses.includes(codeCourse);
-}
 
 function blocsDetermine(classes) {
     isBloc1 = classes.some(classe => classe.substring(0, 1) === '1');
@@ -108,37 +105,14 @@ function blocsDetermine(classes) {
 
 function addCourse(courseParams, blocNum) {
     if (!courseParams || courseParams.includes("all")) {
-        for (let bloc of Object.values(blocs[blocNum])) {
-            courses.push("IG" + bloc);
+        for (let classe of cleanBlocs[blocNum]) {
+            courses.push(classe.id);
         }
     } else {
         courseParams.forEach(course => {
-            courses.push("IG" + course);
+            courses.push(course);
         })
     }
-}
-
-function cleanLanguageCourse(course) {
-    let stringMatch = course.substring(6).match(patternCourse)[0];
-    stringMatch = stringMatch.substring(0, --stringMatch.length);
-    let returnValue;
-    if (langOpt2) {
-        if (langOpt2.includes('ALNL')) {
-            returnValue = labelEN.includes(stringMatch)
-        } else {
-            returnValue = labelALNL.includes(stringMatch)
-        }
-    }
-
-    if (langOpt3) {
-        if (langOpt3.includes('ALNL')) {
-            returnValue = labelEN.includes(stringMatch)
-        } else {
-            returnValue = labelALNL.includes(stringMatch)
-        }
-    }
-
-    return returnValue;
 }
 
 module.exports = router;

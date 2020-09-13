@@ -14,43 +14,35 @@ module.exports = () => {
                             value: "1C"
                         }, {text: "Groupe D", value: "1D"}, {text: "Groupe E", value: "1E"}, {
                             text: "Groupe F",
-                            value: "1F",
-                            disabled: true
-                        }, {text: "Groupe G", value: "1G", disabled: true}, {
+                            value: "1F"
+                        }, {text: "Groupe G", value: "1G"}, {
                             text: "Groupe H",
-                            value: "1H",
-                            disabled: true
+                            value: "1H"
                         }])
                         break;
                     case 2:
                         resolve([{text: "Groupe A", value: "2A"}, {text: "Groupe B", value: "2B"}, {
                             text: "Groupe C",
-                            value: "2C",
-                            disabled: true
-                        }, {text: "Groupe D", value: "2D", disabled: true}, {
+                            value: "2C"
+                        }, {text: "Groupe D", value: "2D"}, {
                             text: "Groupe E",
-                            value: "2E",
-                            disabled: true
-                        }, {text: "Groupe F", value: "2F", disabled: true}, {
+                            value: "2E"
+                        }, {text: "Groupe F", value: "2F"}, {
                             text: "Groupe G",
-                            value: "2G",
-                            disabled: true
-                        }, {text: "Groupe H", value: "2H", disabled: true}])
+                            value: "2G"
+                        }, {text: "Groupe H", value: "2H"}])
                         break;
                     case 3:
                         resolve([{text: "Groupe A", value: "3A"}, {text: "Groupe B", value: "3B"}, {
                             text: "Groupe C",
-                            value: "3C",
-                            disabled: true
+                            value: "3C"
                         }, {text: "Groupe D", value: "3D"}, {
                             text: "Groupe E",
-                            value: "3E",
-                            disabled: true
-                        }, {text: "Groupe F", value: "3F", disabled: true}, {
+                            value: "3E"
+                        }, {text: "Groupe F", value: "3F"}, {
                             text: "Groupe G",
-                            value: "3G",
-                            disabled: true
-                        }, {text: "Groupe H", value: "3H", disabled: true}])
+                            value: "3G"
+                        }, {text: "Groupe H", value: "3H"}])
                         break;
                     default:
                         reject("404");

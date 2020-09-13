@@ -26,8 +26,10 @@
       <router-link to="/help" class="text-decoration-none">Help</router-link>
       !
     </v-alert>
-    <v-form>
-      <v-expansion-panels accordion focusable flat hover v-model="showAccordion">
+    <v-alert v-if="loadingError" text type="error" class="mt-5 mb-5">Une erreur s'est produite lors de la récupération des
+      informations, veuillez rafraîchir la page ou réessayer plus tard.
+    </v-alert>
+      <v-expansion-panels accordion focusable flat hover v-model="showAccordion" :disabled="loadingError">
         <v-expansion-panel>
           <v-expansion-panel-header>Bloc 1</v-expansion-panel-header>
           <v-expansion-panel-content>
@@ -68,6 +70,7 @@
                   clearable
                   @input="searchInput=null"
                   :search-input.sync="searchInput"
+                  :disabled="selection.groups.bloc1.length === 0"
               >
                 <v-list-item
                     slot="prepend-item"
@@ -127,12 +130,13 @@
                   clearable
                   @input="searchInput=null"
                   :search-input.sync="searchInput"
-                  v-if="!searchInput"
+                  :disabled="selection.groups.bloc2.length === 0"
               >
                 <v-list-item
                     slot="prepend-item"
                     ripple
                     @click="toggleCours2"
+                    v-if="!searchInput"
                 >
                   <v-list-item-action>
                     <v-icon>{{ iconSelected(selection.classes.bloc2, data.classes.bloc2) }}</v-icon>
@@ -145,19 +149,6 @@
                     v-if="!searchInput"
                 />
               </v-autocomplete>
-              <v-radio-group
-                  row
-                  prepend-icon="mdi-account-voice"
-                  v-model="selection.lang.bloc2"
-                  class="mt-5"
-                  label="Seconde langue"
-                  hint="Choisis ta 2ème langue"
-                  persistent-hint
-                  dense
-              >
-                <v-radio label="Anglais renforcement" value="EN2"></v-radio>
-                <v-radio label="Allemand / Néerlandais" value="ALNL2"></v-radio>
-              </v-radio-group>
             </v-skeleton-loader>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -199,6 +190,7 @@
                   clearable
                   @input="searchInput=null"
                   :search-input.sync="searchInput"
+                  :disabled="selection.groups.bloc3.length === 0"
               >
                 <v-list-item
                     slot="prepend-item"
@@ -222,19 +214,6 @@
                     v-if="!searchInput"
                 />
               </v-autocomplete>
-              <v-radio-group
-                  row
-                  prepend-icon="mdi-account-voice"
-                  v-model="selection.lang.bloc3"
-                  class="mt-5"
-                  label="Seconde langue"
-                  hint="Choisis ta 2ème langue"
-                  persistent-hint
-                  dense
-              >
-                <v-radio label="Anglais renforcement" value="EN3"></v-radio>
-                <v-radio label="Allemand / Néerlandais" value="ALNL3"></v-radio>
-              </v-radio-group>
             </v-skeleton-loader>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -245,12 +224,22 @@
             class="mr-4"
             depressed
             @click="generateURL"
+            :disabled="!checkGroupsNotEmpty || loadingError"
         >
           <v-icon>mdi-link-variant</v-icon>
           Générer le lien
         </v-btn>
+        <v-btn
+            color="orange lighten-2"
+            class="mr-4"
+            depressed
+            @click="clearData"
+            :disabled="noDataSelected || loadingError"
+        >
+          <v-icon>mdi-cached</v-icon>
+          Reset
+        </v-btn>
       </v-row>
-    </v-form>
     <v-scroll-y-reverse-transition>
       <v-row justify="center" align="center" v-if="urlGenerated">
         <v-col sm="9" xl="11" md="11">
@@ -320,10 +309,6 @@ export default {
           bloc1: [],
           bloc2: [],
           bloc3: []
-        },
-        lang: {
-          bloc2: '',
-          bloc3: ''
         }
       },
       data: {
@@ -338,6 +323,7 @@ export default {
           bloc3: []
         }
       },
+      loadingError: false,
       urlGenerated: "",
       showConfirmTiptool: false,
       showToast: false,
@@ -346,13 +332,25 @@ export default {
     }
   },
   async created() {
-    this.data.groups.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/1')).data
-    this.data.groups.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/2')).data
-    this.data.groups.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/3')).data
-    this.data.classes.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/1')).data
-    this.data.classes.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/2')).data
-    this.data.classes.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/3')).data
+    try{
+      this.data.groups.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/1')).data
+      this.data.groups.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/2')).data
+      this.data.groups.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/3')).data
+      this.data.classes.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/1')).data
+      this.data.classes.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/2')).data
+      this.data.classes.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/3')).data
+    }catch(e){
+      this.loadingError = true;
+    }
   },
+  /*beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // access to component instance via `vm`
+      console.log(vm.$route.params.id === 'yo')
+      if(vm.$route.params.id === 'yo')
+        return next('/404')
+    })
+  },*/
   computed: {
     selectedAllOptions() {
       return (selectedArray, fullArray) => {
@@ -382,15 +380,8 @@ export default {
     checkGroupsNotEmpty() {
       return this.selection.groups.bloc1.length !== 0 || this.selection.groups.bloc2.length !== 0 || this.selection.groups.bloc3.length !== 0;
     },
-    getLanguagesArray() {
-      return (groups) => {
-        let languages = [];
-        if (this.selection.lang.bloc2 && groups.filter(group => group.charAt(0) === '2').length > 0)
-          languages.push(this.selection.lang.bloc2);
-        if (this.selection.lang.bloc3 && groups.filter(group => group.charAt(0) === '3').length > 0)
-          languages.push(this.selection.lang.bloc3);
-        return languages;
-      }
+    noDataSelected(){
+      return !this.checkGroupsNotEmpty && this.selection.classes.bloc1.length === 0 && this.selection.classes.bloc2.length === 0 && this.selection.classes.bloc3.length === 0
     },
     getFullParamsURL() {
       return (obj) => {
@@ -398,16 +389,12 @@ export default {
         Parcours des cours sélectionnés pour la génération des String pour les paramètres URL
             - A revoir ?
         */
-        let tempCrs1 = obj.classes.filter(crs => crs === "1" || (crs >= 100 && crs <= 199));
-        let paramCrs1 = `${obj.allClassesBloc1 ? 'crs1[]=all' : tempCrs1.map(crs => `crs1[]=${crs}`).join('&')}`;
-        let tempCrs2 = obj.classes.filter(crs => crs === "2" || (crs >= 200 && crs <= 299));
-        let paramCrs2 = `${obj.allClassesBloc2 ? 'crs2[]=all' : tempCrs2.map(crs => `crs2[]=${crs}`).join('&')}`;
-        let tempCrs3 = obj.classes.filter(crs => crs === "3" || (crs >= 300 && crs <= 399));
-        let paramCrs3 = `${obj.allClassesBloc3 ? 'crs3[]=all' : tempCrs3.map(crs => `crs3[]=${crs}`).join('&')}`;
-        let tempLanguage2 = obj.languages.filter(lang => lang.substring((lang.length - 1)) === "2");
-        let paramLang2 = tempLanguage2.map(lang => `optl2=${lang}`).join('&');
-        let tempLanguage3 = obj.languages.filter(lang => lang.substring((lang.length - 1)) === "3");
-        let paramLang3 = tempLanguage3.map(lang => `optl3=${lang}`).join('&');
+
+        let paramCrs1 = `${obj.allClassesBloc1 ? 'crs1[]=all' : obj.classes.bloc1.map(crs => `crs1[]=${crs}`).join('&')}`;
+
+        let paramCrs2 = `${obj.allClassesBloc2 ? 'crs2[]=all' : obj.classes.bloc2.map(crs => `crs2[]=${crs}`).join('&')}`;
+
+        let paramCrs3 = `${obj.allClassesBloc3 ? 'crs3[]=all' : obj.classes.bloc3.map(crs => `crs3[]=${crs}`).join('&')}`;
 
         /*
             Concatenation des paramètres précédemment créés
@@ -416,8 +403,6 @@ export default {
         let paramCrsFull = (paramCrs1 && paramCrs1.length > 0) ? '&' + paramCrs1 : '';
         paramCrsFull += (paramCrs2 && paramCrs2.length > 0) ? '&' + paramCrs2 : '';
         paramCrsFull += (paramCrs3 && paramCrs3.length > 0) ? '&' + paramCrs3 : '';
-        paramCrsFull += (paramLang2 && paramLang2.length > 0) ? '&' + paramLang2 : '';
-        paramCrsFull += (paramLang3 && paramLang3.length > 0) ? '&' + paramLang3 : '';
         return paramCrsFull
       }
     }
@@ -425,19 +410,19 @@ export default {
   methods: {
     toggleCours1() {
       this.$nextTick(() => {
-        if (this.selectedAllOptions(this.selection.classes.bloc1, this.data.classes.bloc1)) {
+        if (this.selectedAllOptions(this.selection.classes.bloc1, this.data.classes.bloc1.filter(cours => cours.value))) {
           this.selection.classes.bloc1 = []
         } else {
-          this.selection.classes.bloc1 = this.data.classes.bloc1.slice()
+          this.selection.classes.bloc1 = this.data.classes.bloc1.filter(cours => cours.value).map(cours => cours.value).slice()
         }
       })
     },
     toggleCours2() {
       this.$nextTick(() => {
-        if (this.selectedAllOptions(this.selection.classes.bloc2, this.data.classes.bloc2)) {
+        if (this.selectedAllOptions(this.selection.classes.bloc2, this.data.classes.bloc2.filter(cours => cours.value))) {
           this.selection.classes.bloc2 = []
         } else {
-          this.selection.classes.bloc2 = this.data.classes.bloc2.slice()
+          this.selection.classes.bloc2 = this.data.classes.bloc2.filter(cours => cours.value).map(cours => cours.value).slice()
         }
       })
     },
@@ -464,6 +449,20 @@ export default {
         this.showConfirmTiptool = false
       }, 1000);
     },
+    clearData(){
+      this.selection = {
+        groups: {
+          bloc1: [],
+          bloc2: [],
+          bloc3: []
+        },
+        classes: {
+          bloc1: [],
+          bloc2: [],
+          bloc3: []
+        }
+      }
+    },
     generateURL() {
       this.showAccordion = false;
       if (!this.checkGroupsNotEmpty) {
@@ -477,13 +476,16 @@ export default {
       } else {
         const mergedGroups = this.selection.groups.bloc1.concat(this.selection.groups.bloc2).concat(this.selection.groups.bloc3)
         let generatedObject = {
-          classes: this.selection.classes.bloc1.concat(this.selection.classes.bloc2).concat(this.selection.classes.bloc3),
+          classes: {
+            bloc1: this.selection.classes.bloc1,
+            bloc2: this.selection.classes.bloc2,
+            bloc3: this.selection.classes.bloc3
+          },
           groups: mergedGroups,
-          languages: this.getLanguagesArray(mergedGroups),
-          allClassesBloc1: this.selection.classes.bloc1.length === this.data.classes.bloc1.length,
+          allClassesBloc1: this.selection.classes.bloc1.length === this.data.classes.bloc1.filter(cours => cours.value).length,
           //pas nécessaire de mettre crs1[] = all si aucun cours n'est sélectionné (en backend, si aucun cours sélectionné => tous les cours sont pris en charge
           //allClassesBloc1: (this.selection.classes.bloc1.length === this.data.classes.bloc1.length) || (this.selectedGroupsBloc.filter(group => group.charAt(0) === '1').length > 0 && this.selection.classes.bloc1.length === 0),
-          allClassesBloc2: this.selection.classes.bloc2.length === this.data.classes.bloc2.length,
+          allClassesBloc2: this.selection.classes.bloc2.length === this.data.classes.bloc2.filter(cours => cours.value).length,
           allClassesBloc3: this.selection.classes.bloc3.length === this.data.classes.bloc3.filter(cours => cours.value).length
         }
 
