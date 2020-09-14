@@ -8,11 +8,13 @@ const home = () => import('@/views/home')
 const help = () => import('@/views/help')
 const agenda = () => import('@/views/agenda')
 const error404 = () => import('@/views/error404')
+const bug = () => import('@/views/bug')
 
 const routes = [
     {path: '/', component: home},
     {path: '/help', component: help},
     {path: '/agenda', component: agenda},
+    {path: '/bug', component: bug},
     //{path: '/section/:id', component: home},
     {path: '/404', component: error404},
     {path: '*', redirect: '/404'}

@@ -2,7 +2,8 @@ const credentials = require('./credentials.json');
 const axios = require('axios');
 const _ = require('lodash');
 const fs = require('fs');
-const IGInfos = require('./IESN.json')
+const IESNInfos = require('./IESN.json');
+const groupsIESN = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
 const axiosPortailLog = axios.create({
     baseURL: 'https://portail.henallux.be/api/',
@@ -20,19 +21,18 @@ module.exports = {
         module.exports.updateClassesCodes(true);
     },
 
-    sendDiscordMessage: (message, isErr = true) => {
+    sendDiscordMessage: (messageObj, isErr = true) => {
         const discordMessage = {
             content: isErr ? `<@${credentials.idDiscord}>` : "",
             avatar_url: "https://portail.henallux.be/favicon-96x96.png",
             username: "IESNScheduler",
-            title: isErr ? "Error" : "Information",
             embeds: [{
                 timestamp: new Date(Date.now()),
                 color: isErr ? 16723200 : 51980,
                 fields: [
                     {
-                        name: "Message",
-                        value: message
+                        name: messageObj.title,
+                        value: messageObj.text
                     }
                 ]
             }]
@@ -54,12 +54,12 @@ module.exports = {
 
                 if (!_.isEqual(currentCodes, reqCodes)) {
                     currentCodes = reqCodes;
-                    module.exports.sendDiscordMessage(onLoad ? "Codes added to cache" : "Codes updated", false);
+                    module.exports.sendDiscordMessage( {title: "Information", text: onLoad ? "Codes mis en cache" : "Code mis à jour" }, false);
                 }
                 //getCalendars();
             })
             .catch(err => {
-                module.exports.sendDiscordMessage("Error when searching codes " + err);
+                module.exports.sendDiscordMessage({title: "Erreur cache des codes-cours", text: "**Détails** : " + err });
             })
     },
 
@@ -72,48 +72,87 @@ module.exports = {
         return axiosPortailLog;
     },
 
-    getBlocInfosForVue: (blocNb) => {
-        const UEwithClasses = IGInfos['IG'][blocNb].filter(classe => classe.classes)
-        const UEWithoutClasses = IGInfos['IG'][blocNb].filter(classe => !classe.classes)
-
+    getBlocInfosForVue: (blocNb, section = 'IG') => {
         let finalArray = []
-        UEWithoutClasses.map(mapToVueObject).forEach(classe => finalArray.push(classe))
+        if(IESNInfos[section][blocNb]){
+            const UEwithClasses = IESNInfos[section][blocNb].filter(classe => classe.classes)
+            const UEWithoutClasses = IESNInfos[section][blocNb].filter(classe => !classe.classes)
 
-        UEwithClasses.forEach(classe => {
-            finalArray.push({header: classe.displayName})
-            classe.classes.map(mapToVueObject).forEach(c => finalArray.push(c))
-        })
+            UEWithoutClasses.map(mapToVueObject).forEach(classe => finalArray.push(classe))
 
+            UEwithClasses.forEach(classe => {
+                finalArray.push({header: classe.displayName})
+                classe.classes.map(mapToVueObject).forEach(c => finalArray.push(c))
+            })
+        }
         return finalArray
     },
 
-    getBlocInfosForCalendar: () => {
+    getBlocInfosForCalendar: (section = 'IG') => {
         let cleanBlocs = {
             1: [],
             2: [],
             3: []
         };
-        let allClassesLabels = [];
-        for(let i = 1; i <= 3; i++){
-            const UEwithClasses = IGInfos['IG'][i].filter(classe => classe.classes)
-            const UEWithoutClasses = IGInfos['IG'][i].filter(classe => !classe.classes)
-            UEWithoutClasses.map(mapToCalendar).forEach(classe => {
-                cleanBlocs[i].push(classe);
-                allClassesLabels.push(classe.displayName)
-            })
 
-            UEwithClasses.forEach(classe => {
-                classe.classes.map(mapToCalendar).forEach(c => {
-                    cleanBlocs[i].push(c);
-                    allClassesLabels.push(c.displayName)
+        for(let i = 1; i <= 3; i++){
+            if(IESNInfos[section][i].length > 0){
+                const UEwithClasses = IESNInfos[section][i].filter(classe => classe.classes)
+                const UEWithoutClasses = IESNInfos[section][i].filter(classe => !classe.classes)
+                UEWithoutClasses.map(mapToCalendar).forEach(classe => {
+                    cleanBlocs[i].push(classe);
                 })
-            })
+
+                UEwithClasses.forEach(classe => {
+                    classe.classes.map(mapToCalendar).forEach(c => {
+                        cleanBlocs[i].push(c);
+                    })
+                })
+            }
         }
+
+        const allClassesLabels = [].concat(cleanBlocs[1], cleanBlocs[2], cleanBlocs[3]).map(elem => elem.displayName);
 
         return {
             cleanBlocs,
             allClassesLabels
         }
+    },
+
+    getSectionInfosForVue: (section = 'IG') => {
+
+        let tempObject = {
+            /*bloc1: {
+                groups: [],
+                classes: []
+            },bloc2: {
+                groups: [],
+                classes: []
+            },bloc3: {
+                groups: [],
+                classes: []
+            }*/
+        }
+        for(let blocNumber = 1; blocNumber <= 3; blocNumber ++){
+            tempObject["bloc" + blocNumber] = {
+                groups: [],
+                classes: []
+            }
+            tempObject["bloc" + blocNumber].classes = module.exports.getBlocInfosForVue(blocNumber, section);
+            if(tempObject["bloc" + blocNumber].classes.length > 0){
+                groupsIESN.forEach(grpLetter => {
+                    tempObject["bloc" + blocNumber].groups.push({
+                        text: "Groupe " + grpLetter, value: `${blocNumber + grpLetter}`
+                    })
+                })
+            }
+        }
+
+        return tempObject;
+    },
+
+    getAllSections: () => {
+        return Object.keys(IESNInfos)
     }
 };
 

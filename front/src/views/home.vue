@@ -30,11 +30,11 @@
       informations, veuillez rafraîchir la page ou réessayer plus tard.
     </v-alert>
       <v-expansion-panels accordion focusable flat hover v-model="showAccordion" :disabled="loadingError">
-        <v-expansion-panel>
-          <v-expansion-panel-header>Bloc 1</v-expansion-panel-header>
+        <v-expansion-panel v-for="(bloc, i) in data" v-bind:key="bloc" :disabled="bloc.groups.length === 0">
+          <v-expansion-panel-header>Bloc {{ i.charAt(4) }}</v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-skeleton-loader
-                :loading="data.groups.bloc1.length === 0"
+                :loading="bloc.groups.length === 0"
                 type="card-heading"
             >
               <v-select
@@ -43,170 +43,45 @@
                   deletable-chips
                   persistent-hint
                   hint="Choisis ton/tes groupes"
-                  v-model="selection.groups.bloc1"
+                  v-model="selection[`${i}`].groups"
                   label="Groupe"
-                  :items="data.groups.bloc1"
+                  :items="bloc.groups"
                   prepend-inner-icon="mdi-account-group"
                   clearable
               >
               </v-select>
             </v-skeleton-loader>
             <v-skeleton-loader
-                :loading="data.classes.bloc1.length === 0"
+                :loading="bloc.classes.length === 0"
                 type="card-heading"
             >
               <v-autocomplete
                   multiple
                   chips
-                  :small-chips="selection.classes.bloc1.length > 5"
+                  :small-chips="selection[`${i}`].classes.length > 5"
                   deletable-chips
                   persistent-hint
                   hint="Choisis ton/tes cours"
-                  v-model="selection.classes.bloc1"
+                  v-model="selection[`${i}`].classes"
                   label="Cours"
-                  :items="data.classes.bloc1"
+                  :items="bloc.classes"
                   prepend-inner-icon="mdi-school-outline"
                   class="mt-5"
                   clearable
                   @input="searchInput=null"
                   :search-input.sync="searchInput"
-                  :disabled="selection.groups.bloc1.length === 0"
+                  :disabled="selection[`${i}`].groups.length === 0"
               >
                 <v-list-item
                     slot="prepend-item"
                     ripple
-                    @click="toggleCours1"
+                    @click="toggleCours(i)"
                     v-if="!searchInput"
                 >
                   <v-list-item-action>
-                    <v-icon>{{ iconSelected(selection.classes.bloc1, data.classes.bloc1) }}</v-icon>
+                    <v-icon>{{ iconSelected(selection[`${i}`].classes, bloc.classes) }}</v-icon>
                   </v-list-item-action>
-                  <v-list-item-title>{{ labelSelect(selection.classes.bloc1, data.classes.bloc1) }}</v-list-item-title>
-                </v-list-item>
-                <v-divider
-                    slot="prepend-item"
-                    class="mt-2"
-                    v-if="!searchInput"
-                />
-              </v-autocomplete>
-            </v-skeleton-loader>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-header>Bloc 2</v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-skeleton-loader
-                :loading="data.groups.bloc2.length === 0"
-                type="card-heading"
-            >
-              <v-select
-                  multiple
-                  chips
-                  deletable-chips
-                  persistent-hint
-                  hint="Choisis ton/tes groupes"
-                  v-model="selection.groups.bloc2"
-                  label="Groupe"
-                  :items="data.groups.bloc2"
-                  prepend-inner-icon="mdi-account-group"
-              />
-            </v-skeleton-loader>
-            <v-skeleton-loader
-                :loading="data.classes.bloc2.length === 0"
-                type="card-heading"
-            >
-              <v-autocomplete
-                  multiple
-                  chips
-                  :small-chips="selection.classes.bloc2.length > 5"
-                  deletable-chips
-                  persistent-hint
-                  hint="Choisis ton/tes cours"
-                  v-model="selection.classes.bloc2"
-                  label="Cours"
-                  :items="data.classes.bloc2"
-                  prepend-inner-icon="mdi-school-outline"
-                  class="mt-5"
-                  clearable
-                  @input="searchInput=null"
-                  :search-input.sync="searchInput"
-                  :disabled="selection.groups.bloc2.length === 0"
-              >
-                <v-list-item
-                    slot="prepend-item"
-                    ripple
-                    @click="toggleCours2"
-                    v-if="!searchInput"
-                >
-                  <v-list-item-action>
-                    <v-icon>{{ iconSelected(selection.classes.bloc2, data.classes.bloc2) }}</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-title>{{ labelSelect(selection.classes.bloc2, data.classes.bloc2) }}</v-list-item-title>
-                </v-list-item>
-                <v-divider
-                    slot="prepend-item"
-                    class="mt-2"
-                    v-if="!searchInput"
-                />
-              </v-autocomplete>
-            </v-skeleton-loader>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-header>Bloc 3</v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-skeleton-loader
-                :loading="data.groups.bloc3.length === 0"
-                type="card-heading"
-            >
-              <v-select
-                  multiple
-                  chips
-                  deletable-chips
-                  persistent-hint
-                  hint="Choisis ton/tes groupes"
-                  v-model="selection.groups.bloc3"
-                  label="Groupe"
-                  :items="data.groups.bloc3"
-                  prepend-inner-icon="mdi-account-group"
-              />
-            </v-skeleton-loader>
-            <v-skeleton-loader
-                :loading="data.classes.bloc3.length === 0"
-                type="card-heading"
-            >
-              <v-autocomplete
-                  multiple
-                  chips
-                  :small-chips="selection.classes.bloc3.length > 5"
-                  deletable-chips
-                  persistent-hint
-                  hint="Choisis ton/tes cours"
-                  v-model="selection.classes.bloc3"
-                  label="Cours"
-                  :items="data.classes.bloc3"
-                  prepend-inner-icon="mdi-school-outline"
-                  class="mt-5"
-                  clearable
-                  @input="searchInput=null"
-                  :search-input.sync="searchInput"
-                  :disabled="selection.groups.bloc3.length === 0"
-              >
-                <v-list-item
-                    slot="prepend-item"
-                    ripple
-                    @click="toggleCours3"
-                    v-if="!searchInput"
-                >
-                  <v-list-item-action>
-                    <v-icon>{{
-                        iconSelected(selection.classes.bloc3, data.classes.bloc3.filter(cours => cours.value))
-                      }}
-                    </v-icon>
-                  </v-list-item-action>
-                  <v-list-item-title>
-                    {{ labelSelect(selection.classes.bloc3, data.classes.bloc3.filter(cours => cours.value)) }}
-                  </v-list-item-title>
+                  <v-list-item-title>{{ labelSelect(selection[`${i}`].classes, bloc.classes) }}</v-list-item-title>
                 </v-list-item>
                 <v-divider
                     slot="prepend-item"
@@ -300,29 +175,20 @@ export default {
     return {
       showAccordion: null,
       selection: {
-        groups: {
-          bloc1: [],
-          bloc2: [],
-          bloc3: []
+        bloc1: {
+          groups: [],
+          classes: []
         },
-        classes: {
-          bloc1: [],
-          bloc2: [],
-          bloc3: []
+        bloc2: {
+          groups: [],
+          classes: []
+        },
+        bloc3: {
+          groups: [],
+          classes: []
         }
       },
-      data: {
-        groups: {
-          bloc1: [],
-          bloc2: [],
-          bloc3: []
-        },
-        classes: {
-          bloc1: [],
-          bloc2: [],
-          bloc3: []
-        }
-      },
+      data: { },
       loadingError: false,
       urlGenerated: "",
       showConfirmTiptool: false,
@@ -333,12 +199,7 @@ export default {
   },
   async created() {
     try{
-      this.data.groups.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/1')).data
-      this.data.groups.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/2')).data
-      this.data.groups.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/groups/3')).data
-      this.data.classes.bloc1 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/1')).data
-      this.data.classes.bloc2 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/2')).data
-      this.data.classes.bloc3 = (await axios.get('https://iesn.thibaultclaude.be/api/classes/3')).data
+      this.data = (await axios.get('https://iesn.thibaultclaude.be/api/section/IG')).data;
     }catch(e){
       this.loadingError = true;
     }
@@ -378,10 +239,10 @@ export default {
       }
     },
     checkGroupsNotEmpty() {
-      return this.selection.groups.bloc1.length !== 0 || this.selection.groups.bloc2.length !== 0 || this.selection.groups.bloc3.length !== 0;
+      return this.selection.bloc1.groups.length !== 0 || this.selection.bloc2.groups.length !== 0 || this.selection.bloc3.groups.length !== 0;
     },
     noDataSelected(){
-      return !this.checkGroupsNotEmpty && this.selection.classes.bloc1.length === 0 && this.selection.classes.bloc2.length === 0 && this.selection.classes.bloc3.length === 0
+      return !this.checkGroupsNotEmpty && this.selection.bloc1.classes.length === 0 && this.selection.bloc2.classes.length === 0 && this.selection.bloc3.classes.length === 0
     },
     getFullParamsURL() {
       return (obj) => {
@@ -408,30 +269,12 @@ export default {
     }
   },
   methods: {
-    toggleCours1() {
+    toggleCours(bloc) {
       this.$nextTick(() => {
-        if (this.selectedAllOptions(this.selection.classes.bloc1, this.data.classes.bloc1.filter(cours => cours.value))) {
-          this.selection.classes.bloc1 = []
+        if (this.selectedAllOptions(this.selection[bloc].classes, this.data[bloc].classes.filter(cours => cours.value))) {
+          this.selection[bloc].classes = []
         } else {
-          this.selection.classes.bloc1 = this.data.classes.bloc1.filter(cours => cours.value).map(cours => cours.value).slice()
-        }
-      })
-    },
-    toggleCours2() {
-      this.$nextTick(() => {
-        if (this.selectedAllOptions(this.selection.classes.bloc2, this.data.classes.bloc2.filter(cours => cours.value))) {
-          this.selection.classes.bloc2 = []
-        } else {
-          this.selection.classes.bloc2 = this.data.classes.bloc2.filter(cours => cours.value).map(cours => cours.value).slice()
-        }
-      })
-    },
-    toggleCours3() {
-      this.$nextTick(() => {
-        if (this.selectedAllOptions(this.selection.classes.bloc3, this.data.classes.bloc3.filter(cours => cours.value))) {
-          this.selection.classes.bloc3 = []
-        } else {
-          this.selection.classes.bloc3 = this.data.classes.bloc3.filter(cours => cours.value).map(cours => cours.value).slice()
+          this.selection[bloc].classes = this.data[bloc].classes.filter(cours => cours.value).map(cours => cours.value).slice()
         }
       })
     },
@@ -451,15 +294,17 @@ export default {
     },
     clearData(){
       this.selection = {
-        groups: {
-          bloc1: [],
-          bloc2: [],
-          bloc3: []
+        bloc1: {
+          groups: [],
+          classes: []
         },
-        classes: {
-          bloc1: [],
-          bloc2: [],
-          bloc3: []
+        bloc2: {
+          groups: [],
+          classes: []
+        },
+        bloc3: {
+          groups: [],
+          classes: []
         }
       }
     },
@@ -474,19 +319,17 @@ export default {
         this.showToast = true;
         this.urlGenerated = '';
       } else {
-        const mergedGroups = this.selection.groups.bloc1.concat(this.selection.groups.bloc2).concat(this.selection.groups.bloc3)
+        const mergedGroups = this.selection.bloc1.groups.concat(this.selection.bloc2.groups).concat(this.selection.bloc3.groups)
         let generatedObject = {
           classes: {
-            bloc1: this.selection.classes.bloc1,
-            bloc2: this.selection.classes.bloc2,
-            bloc3: this.selection.classes.bloc3
+            bloc1: this.selection.bloc1.classes,
+            bloc2: this.selection.bloc2.classes,
+            bloc3: this.selection.bloc3.classes
           },
           groups: mergedGroups,
-          allClassesBloc1: this.selection.classes.bloc1.length === this.data.classes.bloc1.filter(cours => cours.value).length,
-          //pas nécessaire de mettre crs1[] = all si aucun cours n'est sélectionné (en backend, si aucun cours sélectionné => tous les cours sont pris en charge
-          //allClassesBloc1: (this.selection.classes.bloc1.length === this.data.classes.bloc1.length) || (this.selectedGroupsBloc.filter(group => group.charAt(0) === '1').length > 0 && this.selection.classes.bloc1.length === 0),
-          allClassesBloc2: this.selection.classes.bloc2.length === this.data.classes.bloc2.filter(cours => cours.value).length,
-          allClassesBloc3: this.selection.classes.bloc3.length === this.data.classes.bloc3.filter(cours => cours.value).length
+          allClassesBloc1: this.selection.bloc1.classes.length === this.data.bloc1.classes.filter(cours => cours.value).length,
+          allClassesBloc2: this.selection.bloc2.classes.length === this.data.bloc2.classes.filter(cours => cours.value).length,
+          allClassesBloc3: this.selection.bloc3.classes.length === this.data.bloc3.classes.filter(cours => cours.value).length
         }
 
         const fullParams = this.getFullParamsURL(generatedObject);
