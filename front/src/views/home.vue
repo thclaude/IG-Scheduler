@@ -29,14 +29,14 @@
     <v-alert v-if="loadingError" text type="error" class="mt-5 mb-5">Une erreur s'est produite lors de la récupération des
       informations, veuillez rafraîchir la page ou réessayer plus tard.
     </v-alert>
+    <v-skeleton-loader
+        :loading="Object.keys(data).length === 0"
+        type="list-item@3"
+    >
       <v-expansion-panels accordion focusable flat hover v-model="showAccordion" :disabled="loadingError">
-        <v-expansion-panel v-for="(bloc, i) in data" v-bind:key="bloc" :disabled="bloc.groups.length === 0">
+        <v-expansion-panel v-for="(bloc, i) in data" v-bind:key="i" :disabled="bloc.groups.length === 0">
           <v-expansion-panel-header>Bloc {{ i.charAt(4) }}</v-expansion-panel-header>
           <v-expansion-panel-content>
-            <v-skeleton-loader
-                :loading="bloc.groups.length === 0"
-                type="card-heading"
-            >
               <v-select
                   multiple
                   chips
@@ -50,11 +50,6 @@
                   clearable
               >
               </v-select>
-            </v-skeleton-loader>
-            <v-skeleton-loader
-                :loading="bloc.classes.length === 0"
-                type="card-heading"
-            >
               <v-autocomplete
                   multiple
                   chips
@@ -89,10 +84,10 @@
                     v-if="!searchInput"
                 />
               </v-autocomplete>
-            </v-skeleton-loader>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
+    </v-skeleton-loader>
       <v-row justify="end" class="mt-5">
         <v-btn
             color="primary"
