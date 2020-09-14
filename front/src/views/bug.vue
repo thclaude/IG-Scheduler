@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     sendBugForm() {
-      axios.post('http://localhost:8181/api/discord/send',{
+      axios.post('https://iesn.thibaultclaude.be/api/discord/send',{
           section: this.sectionClass,
           classe: this.classeConcerned,
           contact: this.contact,
