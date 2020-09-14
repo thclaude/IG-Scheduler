@@ -1,8 +1,10 @@
 <template>
   <v-container fluid class="text-center">
-    <v-alert v-if="loadingError" text type="error" class="mt-5 mb-5">Une erreur s'est produite lors de la récupération des
-      informations, veuillez rafraîchir la page ou réessayer plus tard.
-    </v-alert>
+    <v-scroll-y-reverse-transition>
+      <v-alert v-if="loadingError" text :type="errorInfo.type" class="mb-5">
+        {{ errorInfo.text }}
+      </v-alert>
+    </v-scroll-y-reverse-transition>
     <v-layout row wrap justify-center>
       <v-col sm="5" xl="4" md="4">
         <v-select
@@ -23,7 +25,7 @@
             hide-details
             outlined
             dense
-            :disabled="!selection.bloc || loadingError"
+            :disabled="!selection.bloc || this.data.groups.length === 0"
             @change="getEvents"
         ></v-select>
       </v-col>
@@ -173,7 +175,11 @@ export default {
       groups: []
     },
     weekdays: [1, 2, 3, 4, 5, 6, 0],
-    loadingError: false
+    loadingError: false,
+    errorInfo: {
+      type: '',
+      text: ''
+    }
   }),
   methods: {
     async getGroups() {
@@ -187,6 +193,10 @@ export default {
           })
         .catch(() => {
             this.loadingError = true;
+            this.errorInfo = {
+              text: "Une erreur s'est produite lors de la récupération des informations, veuillez rafraîchir la page ou réessayer plus tard.",
+              type: "error"
+            }
         })
     },
     getEvents() {
@@ -195,12 +205,25 @@ export default {
       this.loadingError = false;
       axios.get(`https://iesn.thibaultclaude.be/api/calendar/${this.selection.group}`)
           .then(result => {
-            this.data.events = result.data;
-            this.calendarLoading = false;
+            if(result.data.length === 0){
+              this.loadingError = true;
+              this.boilerplate = true;
+              this.errorInfo = {
+                text: "Aucune information n'est disponible pour ce groupe.",
+                type: "warning"
+              }
+            }else{
+              this.data.events = result.data;
+              this.calendarLoading = false;
+            }
           })
           .catch(() => {
             this.loadingError = true;
             this.boilerplate = true;
+            this.errorInfo = {
+              text: "Une erreur s'est produite lors de la récupération des informations, veuillez rafraîchir la page ou réessayer plus tard.",
+              type: "error"
+            }
           })
     },
     viewDay({date}) {

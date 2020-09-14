@@ -51,6 +51,7 @@ export default {
         {icon: 'mdi-home', text: 'Accueil', route: '/'},
         {icon: 'mdi-calendar-month-outline', text: 'Agenda', route: '/agenda'},
         {icon: 'mdi-lifebuoy', text: 'Aide', route: '/help'},
+        {icon: 'mdi-bug', text: 'Signaler un problème', route: '/bug'}
       ]
     }
   }
