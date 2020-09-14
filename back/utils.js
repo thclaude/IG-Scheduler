@@ -63,7 +63,6 @@ module.exports = {
             })
     },
 
-
     getCurrentCodes: () => {
         return JSON.parse(currentCodes);
     },
@@ -75,8 +74,8 @@ module.exports = {
     getBlocInfosForVue: (blocNb, section = 'IG') => {
         let finalArray = []
         if(IESNInfos[section][blocNb]){
-            const UEwithClasses = IESNInfos[section][blocNb].filter(classe => classe.classes)
-            const UEWithoutClasses = IESNInfos[section][blocNb].filter(classe => !classe.classes)
+            const UEwithClasses = IESNInfos[section][blocNb].classes.filter(classe => classe.classes)
+            const UEWithoutClasses = IESNInfos[section][blocNb].classes.filter(classe => !classe.classes)
 
             UEWithoutClasses.map(mapToVueObject).forEach(classe => finalArray.push(classe))
 
@@ -96,9 +95,9 @@ module.exports = {
         };
 
         for(let i = 1; i <= 3; i++){
-            if(IESNInfos[section][i].length > 0){
-                const UEwithClasses = IESNInfos[section][i].filter(classe => classe.classes)
-                const UEWithoutClasses = IESNInfos[section][i].filter(classe => !classe.classes)
+            if(IESNInfos[section][i].classes.length > 0){
+                const UEwithClasses = IESNInfos[section][i].classes.filter(classe => classe.classes)
+                const UEWithoutClasses = IESNInfos[section][i].classes.filter(classe => !classe.classes)
                 UEWithoutClasses.map(mapToCalendar).forEach(classe => {
                     cleanBlocs[i].push(classe);
                 })
@@ -117,6 +116,10 @@ module.exports = {
             cleanBlocs,
             allClassesLabels
         }
+    },
+
+    getGroupsInfos: (blocNumber, section = 'IG') => {
+        return IESNInfos[section][blocNumber].groups;
     },
 
     getSectionInfosForVue: (section = 'IG') => {
@@ -140,7 +143,7 @@ module.exports = {
             }
             tempObject["bloc" + blocNumber].classes = module.exports.getBlocInfosForVue(blocNumber, section);
             if(tempObject["bloc" + blocNumber].classes.length > 0){
-                groupsIESN.forEach(grpLetter => {
+                module.exports.getGroupsInfos(blocNumber, section).forEach(grpLetter => {
                     tempObject["bloc" + blocNumber].groups.push({
                         text: "Groupe " + grpLetter, value: `${blocNumber + grpLetter}`
                     })

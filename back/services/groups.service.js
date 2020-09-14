@@ -3,46 +3,32 @@
         Utiliser du NoSQL (mongo?)
         Implémenter toutes les méthodes (CRUD)
  */
+const { getGroupsInfos } = require('../utils')
 module.exports = () => {
     return {
         getByBloc: function (id) {
             return new Promise(function (resolve, reject) {
                 switch (id) {
                     case 1:
-                        resolve([{text: "Groupe A", value: "1A"}, {text: "Groupe B", value: "1B"}, {
-                            text: "Groupe C",
-                            value: "1C"
-                        }, {text: "Groupe D", value: "1D"}, {text: "Groupe E", value: "1E"}, {
-                            text: "Groupe F",
-                            value: "1F"
-                        }, {text: "Groupe G", value: "1G"}, {
-                            text: "Groupe H",
-                            value: "1H"
-                        }])
+                        resolve(getGroupsInfos(1).map(grpLetter => {return {
+                                text: `Groupe ${grpLetter}`,
+                                value: `1${grpLetter}`
+                            }
+                        }))
                         break;
                     case 2:
-                        resolve([{text: "Groupe A", value: "2A"}, {text: "Groupe B", value: "2B"}, {
-                            text: "Groupe C",
-                            value: "2C"
-                        }, {text: "Groupe D", value: "2D"}, {
-                            text: "Groupe E",
-                            value: "2E"
-                        }, {text: "Groupe F", value: "2F"}, {
-                            text: "Groupe G",
-                            value: "2G"
-                        }, {text: "Groupe H", value: "2H"}])
+                        resolve(getGroupsInfos(2).map(grpLetter => {return {
+                            text: `Groupe ${grpLetter}`,
+                            value: `2${grpLetter}`
+                        }
+                        }))
                         break;
                     case 3:
-                        resolve([{text: "Groupe A", value: "3A"}, {text: "Groupe B", value: "3B"}, {
-                            text: "Groupe C",
-                            value: "3C"
-                        }, {text: "Groupe D", value: "3D"}, {
-                            text: "Groupe E",
-                            value: "3E"
-                        }, {text: "Groupe F", value: "3F"}, {
-                            text: "Groupe G",
-                            value: "3G"
-                        }, {text: "Groupe H", value: "3H"}])
+                        resolve(getGroupsInfos(3).map(grpLetter => {return {
+                            text: `Groupe ${grpLetter}`,
+                            value: `3${grpLetter}`
+                        }
+                        }))
                         break;
                     default:
                         reject("404");
