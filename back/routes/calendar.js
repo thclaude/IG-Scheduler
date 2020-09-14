@@ -1,15 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const utils = require('../utils.js');
+const {getBlocInfosForCalendar, getAxiosPortailLog, getCurrentCodes, sendDiscordMessage, updateClassesCodes} = require('../utils.js');
 const ical = require("ical-generator");
+const cors = require('cors');
+router.all('*', cors({
+    origin: '*',
+    optionsSuccessStatus: 200
+}))
 
 const patternDate = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const patternTitle = /Matière : ([a-zA-Z0-9-'ÉéèÈà_!:.\/ ()]*)([^\n]*\n+)+/;
 const blocPattern = /\[(\d) IG [A-Z0-9]*]/
 
-const { cleanBlocs, allClassesLabels } = utils.getBlocInfosForCalendar()
+const { cleanBlocs, allClassesLabels } = getBlocInfosForCalendar()
 
-const axiosPortailLog = utils.getAxiosPortailLog();
+const axiosPortailLog = getAxiosPortailLog();
 
 let courses; /* Contiendra la liste des cours que l'utilisateur veut suivre */
 let coreCourses; /* Contiendra les cours communs / déjà rencontrés pour ne pas avoir de doublons dans l'horaire */
@@ -21,10 +26,10 @@ router.get('/', async function (req, res, next) {
     coreCourses = new Set();
     courses = [];
 
-    let classesCodes = utils.getCurrentCodes();
+    let classesCodes = getCurrentCodes();
     let calendar = ical({name: "Cours", timezone: "Europe/Brussels"});
 
-    if (req.query.grp.every(group => Object.keys(classesCodes).includes(group))) { /* Check que les groupes existent bien */
+    if (req.query.grp && req.query.grp.every(group => Object.keys(classesCodes).includes(group))) { /* Check que les groupes existent bien */
         blocsDetermine(req.query.grp);
         fillCourses(req.query.crs1, req.query.crs2, req.query.crs3);
 
@@ -50,8 +55,9 @@ router.get('/', async function (req, res, next) {
                 calendar.serve(res);
             })
             .catch(err => {
-                utils.sendDiscordMessage("Error fetch calendar.js " + err);
-                utils.updateClassesCodes();
+                const message = `**Détails** : ${err}\n**FetchURLParams** : ${fetchURLParams}\n**Groupe** : ${req.query.grp.join(', ')}\n**Cours** :\nBloc 1 : ${req.query.crs1}\nBloc 2 : ${req.query.crs2}\nBloc 3 : ${req.query.crs3}`;
+                sendDiscordMessage({title: "Erreur /calendar", text: message });
+                updateClassesCodes();
             })
     } else {
         res.redirect('/');
