@@ -1,17 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { getAllSections, sendDiscordMessage } = require('../utils');
-const cors = require('cors');
-
-router.all('*', cors({
-    origin: '*',
-    optionsSuccessStatus: 200
-}))
-
-router.all('/discord/*', cors({
-    origin: 'https://iesn.thibaultclaude.be/',
-    optionsSuccessStatus: 200
-}))
 
 const classesService = require('../services/classes.service')();
 const groupsService = require('../services/groups.service')();
@@ -64,7 +53,6 @@ router.get('/section/:section', function (req, res, next) {
 });
 
 router.post('/discord/send', function (req, res, next) {
-    if(req.get('origin') !== 'https://iesn.thibaultclaude.be/') return res.status(403).send('Forbidden');
     try{
         const message = `**Section** : ${req.body.section}
                    **Cours** : ${req.body.classe || 'Non communiqué'}

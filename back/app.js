@@ -7,14 +7,16 @@ const bp = require("body-parser");
 const apiRouter = require('./routes/api');
 const calendarRouter = require('./routes/calendar');
 const serverWebPort = require('./settings.json').serverWebPort;
-const { load } = require('./utils.js');
+const { load, updateClassesCodes} = require('./utils.js');
+const cors = require('cors');
 
 
 // Update des codes pour les requêtes toutes les 5minutes entre 6h et 6h30
-cron.schedule('0-30/1 6 * * *', utils.updateClassesCodes);
+cron.schedule('0-30/1 6 * * *', updateClassesCodes);
 load();
 
 const app = express();
+app.use(cors());
 app.use(bp.json({extend:true}));
 app.use(bp.text({extend:true}));
 app.use(bp.urlencoded({ extended: true }));
