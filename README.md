@@ -14,8 +14,6 @@
 
 ## TODO
 
-* Implémenter une API complète pour les cours/groupes (CRUD)
-    * Panel admin pour mettre à jour rapidement les données si nécessaire (?)
 * Mettre en place un système de cache pour les calendriers
     * Évite trop de requête sur l'API Henallux
     * Évite les moments de down de l'API
