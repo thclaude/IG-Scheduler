@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getBlocInfosForCalendar, getAxiosPortailLog, getCurrentCodes, sendDiscordMessage, updateClassesCodes} = require('../utils.js');
+const { getBlocInfosForCalendar, getAxiosPortailLog, getCurrentCodes, sendDiscordMessage, updateClassesCodes, getAllValidGroupsBySection } = require('../utils.js');
 const ical = require("ical-generator");
 
 const patternDate = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
@@ -24,7 +24,7 @@ router.get('/', async function (req, res, next) {
     let classesCodes = getCurrentCodes();
     let calendar = ical({name: "Cours", timezone: "Europe/Brussels"});
 
-    if (req.query.grp && req.query.grp.every(group => Object.keys(classesCodes).includes(group))) { /* Check que les groupes existent bien */
+    if (req.query.grp && req.query.grp.every(group => getAllValidGroupsBySection().includes(group))) { /* Check que les groupes existent bien */
         blocsDetermine(req.query.grp);
         fillCourses(req.query.crs1, req.query.crs2, req.query.crs3);
 
@@ -72,8 +72,6 @@ function fillCourses(course1, course2, course3) {
 
 /*
     Clean la liste des cours avec les cours utiles & évite les doublons (cours généraux) si plusieurs groupes du même blocs sont sélectionnés
-    Amélioration :
-        - Mettre direct le JSON dans le Set ? Possible/utile ? Enlèverai automatiquement les doublons
  */
 function cleanCourses(course) {
     let transformedString = `${course.start}/${course.end}/${course.location}/${course.title}/${course.details}`; // On crée une chaîne uniquement
