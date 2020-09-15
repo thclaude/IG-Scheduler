@@ -118,8 +118,17 @@ module.exports = {
         }
     },
 
-    getGroupsInfos: (blocNumber, section = 'IG') => {
+    getGroupsInfosByBloc: (blocNumber, section = 'IG') => {
         return IESNInfos[section][blocNumber].groups;
+    },
+
+    getAllValidGroupsBySection: (section = 'IG') => {
+        const blocs = Object.keys(IESNInfos[section]);
+        let finalArray = []
+        blocs.forEach(blocNumber => {
+            finalArray = finalArray.concat(IESNInfos[section][blocNumber].groups.map(grpLetter => blocNumber + grpLetter))
+        })
+        return finalArray;
     },
 
     getSectionInfosForVue: (section = 'IG') => {
@@ -143,7 +152,7 @@ module.exports = {
             }
             tempObject["bloc" + blocNumber].classes = module.exports.getBlocInfosForVue(blocNumber, section);
             if(tempObject["bloc" + blocNumber].classes.length > 0){
-                module.exports.getGroupsInfos(blocNumber, section).forEach(grpLetter => {
+                module.exports.getGroupsInfosByBloc(blocNumber, section).forEach(grpLetter => {
                     tempObject["bloc" + blocNumber].groups.push({
                         text: "Groupe " + grpLetter, value: `${blocNumber + grpLetter}`
                     })
