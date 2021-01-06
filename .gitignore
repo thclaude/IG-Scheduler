@@ -7,7 +7,6 @@ back/calendars/db-init.js
 dist
 calendars
 frontNuxt
-package-lock.json*
 
 # local env files
 .env.local
