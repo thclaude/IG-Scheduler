@@ -87,7 +87,7 @@ function cleanCourses(course) {
     if(isCourse){
         let label = course.details.match(patternTitle)[1];
         let bloc = parseInt(course.text.match(blocPattern)[1]);
-        let foundCourse = cleanBlocs[bloc].filter(classe => classe.displayName === label)
+        let foundCourse = cleanBlocs[bloc].filter(classe => classe.displayName === label || (classe.aliases && classe.aliases.includes(label)))
 
         addThisCourse = courses.some(c => c === foundCourse[0].id) // Si l'ID est présent, alors il sera affiché dans le calendrier
     }

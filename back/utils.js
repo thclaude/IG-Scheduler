@@ -110,8 +110,10 @@ module.exports = {
             }
         }
 
-        const allClassesLabels = [].concat(cleanBlocs[1], cleanBlocs[2], cleanBlocs[3]).map(elem => elem.displayName);
-
+        const tempAllBlocs = [].concat(cleanBlocs[1], cleanBlocs[2], cleanBlocs[3]);
+        const allClassesDisplayName = tempAllBlocs.map(elem => elem.displayName);
+        const allClassesAliases = [].concat.apply([], tempAllBlocs.filter(elem => elem.aliases).map(elem => elem.aliases));
+        const allClassesLabels = [].concat(allClassesDisplayName, allClassesAliases)
         return {
             cleanBlocs,
             allClassesLabels
@@ -209,7 +211,8 @@ const mapToCalendar = (obj) => {
     return {
         displayName: obj.displayName,
         completeName: obj.completeName,
-        id: obj.id
+        id: obj.id,
+        aliases: obj.aliases
     }
 }
 
