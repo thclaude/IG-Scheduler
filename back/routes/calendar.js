@@ -89,7 +89,7 @@ function cleanCourses(course) {
         let bloc = parseInt(course.text.match(blocPattern)[1]);
         let foundCourse = cleanBlocs[bloc].filter(classe => classe.displayName === label || (classe.aliases && classe.aliases.includes(label)))
 
-        addThisCourse = courses.some(c => c === foundCourse[0].id) // Si l'ID est présent, alors il sera affiché dans le calendrier
+        addThisCourse = !foundCourse[0] || courses.some(c => c === foundCourse[0].id) // Si l'ID est présent, alors il sera affiché dans le calendrier
     }
 
     return addThisCourse && !coreCourse; // On check si le cours doit être ajouté et qu'il n'a pas déjà été ajouté
