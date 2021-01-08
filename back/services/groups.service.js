@@ -1,8 +1,3 @@
-/*
-    TODO :
-        Utiliser du NoSQL (mongo?)
-        Implémenter toutes les méthodes (CRUD)
- */
 const { getGroupsInfosByBloc } = require('../utils')
 module.exports = () => {
     return {

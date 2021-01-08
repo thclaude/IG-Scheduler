@@ -7,7 +7,7 @@ const bp = require("body-parser");
 const apiRouter = require('./routes/api');
 const calendarRouter = require('./routes/calendar');
 const serverWebPort = require('./settings.json').serverWebPort;
-const { load, updateClassesCodes} = require('./utils.js');
+const { load, updateClassesCodes } = require('./utils.js');
 const cors = require('cors');
 
 
