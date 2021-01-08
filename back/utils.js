@@ -126,7 +126,7 @@ module.exports = {
         const blocs = Object.keys(IESNInfos[section]);
         let finalArray = [];
         blocs.forEach(blocNumber => {
-            finalArray = [...testArray, ...IESNInfos[section][blocNumber].groups.map(grpLetter => blocNumber + grpLetter)];
+            finalArray = [...finalArray, ...IESNInfos[section][blocNumber].groups.map(grpLetter => blocNumber + grpLetter)];
         })
         return finalArray;
     },
