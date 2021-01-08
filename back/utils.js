@@ -72,18 +72,19 @@ module.exports = {
     },
 
     getBlocInfosForVue: (blocNb, section = 'IG') => {
-        let finalArray = []
+        let finalArray = [];
         if(IESNInfos[section][blocNb]){
-            const UEwithClasses = IESNInfos[section][blocNb].classes.filter(classe => classe.classes)
-            const UEWithoutClasses = IESNInfos[section][blocNb].classes.filter(classe => !classe.classes)
+            const UEwithClasses = IESNInfos[section][blocNb].classes.filter(classe => classe.classes);
+            const UEWithoutClasses = IESNInfos[section][blocNb].classes.filter(classe => !classe.classes);
 
-            UEWithoutClasses.map(mapToVueObject).forEach(classe => finalArray.push(classe))
+            finalArray = [...finalArray, ...UEWithoutClasses.map(mapToVueObject)];
 
             UEwithClasses.forEach(classe => {
-                finalArray.push({header: classe.displayName})
-                classe.classes.map(mapToVueObject).forEach(c => finalArray.push(c))
+                finalArray.push({header: classe.displayName});
+                finalArray = [...finalArray, ...classe.classes.map(mapToVueObject)];
             })
         }
+
         return finalArray
     },
 
@@ -98,22 +99,19 @@ module.exports = {
             if(IESNInfos[section][i].classes.length > 0){
                 const UEwithClasses = IESNInfos[section][i].classes.filter(classe => classe.classes)
                 const UEWithoutClasses = IESNInfos[section][i].classes.filter(classe => !classe.classes)
-                UEWithoutClasses.map(mapToCalendar).forEach(classe => {
-                    cleanBlocs[i].push(classe);
-                })
+
+                cleanBlocs[i] = [...cleanBlocs[i], ...UEWithoutClasses.map(mapToCalendar)]
 
                 UEwithClasses.forEach(classe => {
-                    classe.classes.map(mapToCalendar).forEach(c => {
-                        cleanBlocs[i].push(c);
-                    })
+                    cleanBlocs[i] = [...cleanBlocs[i], ...classe.classes.map(mapToCalendar)]
                 })
             }
         }
 
-        const tempAllBlocs = [].concat(cleanBlocs[1], cleanBlocs[2], cleanBlocs[3]);
+        const tempAllBlocs = [...cleanBlocs[1], ...cleanBlocs[2], ...cleanBlocs[3]];
         const allClassesDisplayName = tempAllBlocs.map(elem => elem.displayName);
-        const allClassesAliases = [].concat.apply([], tempAllBlocs.filter(elem => elem.aliases).map(elem => elem.aliases));
-        const allClassesLabels = [].concat(allClassesDisplayName, allClassesAliases)
+        const allClassesAliases = tempAllBlocs.filter(elem => elem.aliases).reduce((acc, curr) => [...acc, ...curr.aliases], []);
+        const allClassesLabels = [...allClassesDisplayName, ...allClassesAliases];
         return {
             cleanBlocs,
             allClassesLabels
@@ -126,9 +124,9 @@ module.exports = {
 
     getAllValidGroupsBySection: (section = 'IG') => {
         const blocs = Object.keys(IESNInfos[section]);
-        let finalArray = []
+        let finalArray = [];
         blocs.forEach(blocNumber => {
-            finalArray = finalArray.concat(IESNInfos[section][blocNumber].groups.map(grpLetter => blocNumber + grpLetter))
+            finalArray = [...testArray, ...IESNInfos[section][blocNumber].groups.map(grpLetter => blocNumber + grpLetter)];
         })
         return finalArray;
     },
