@@ -54,7 +54,13 @@ router.get('/section/:section', cors(), function (req, res, next) {
 });
 
 router.post('/discord/send', cors({
-    origin: "https://iesn.thibaultclaude.be"
+    origin: function (origin, callback) {
+        if (origin === "https://iesn.thibaultclaude.be") {
+          callback(null, true)
+        } else {
+          callback(null, false)
+        }
+      }
 }), function (req, res, next) {
     try{
         const message = `**Section** : ${req.body.section}
