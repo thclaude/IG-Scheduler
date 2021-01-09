@@ -19,9 +19,11 @@ app.use(bp.text({extend:true}));
 app.use(bp.urlencoded({ extended: true }));
 app.use(logger('tiny'));
 
-
 app.use('/api', apiRouter);
 app.use('/calendar', calendarRouter);
+app.use((err, req, res, next) => {
+    res.status(500).send(err.message || 'An error happened');
+});
 
 http.createServer(app).listen(serverWebPort, function () {
     console.log(`Webserver started on port ${serverWebPort}`);

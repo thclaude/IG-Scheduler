@@ -58,7 +58,7 @@ router.post('/discord/send', cors({
         if (origin === "https://iesn.thibaultclaude.be") {
           callback(null, true)
         } else {
-          callback(null, false)
+          callback(new Error('Not allowed by CORS'))
         }
       }
 }), function (req, res, next) {
