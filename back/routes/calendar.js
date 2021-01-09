@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getBlocInfosForCalendar, getAxiosPortailLog, getCurrentCodes, sendDiscordMessage, updateClassesCodes, getAllValidGroupsBySection } = require('../utils.js');
 const ical = require("ical-generator");
+const cors = require('cors');
 
 const patternDate = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
 const patternTitle = /Matière : ([a-zA-Z0-9-'ÉéèÈà_!:.\/ ()]*)([^\n]*\n+)+/;
@@ -17,7 +18,7 @@ let isBloc1; // L'utilisateur est du bloc 1
 let isBloc2; // L'utilisateur est du bloc 2
 let isBloc3; // L'utilisateur est du bloc 3
 
-router.get('/', async function (req, res, next) {
+router.get('/', cors(), async function (req, res, next) {
     coreCourses = new Set();
     courses = [];
 

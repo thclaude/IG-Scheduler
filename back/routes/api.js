@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { getAllSections, sendDiscordMessage } = require('../utils');
+const cors = require('cors');
 
 const classesService = require('../services/classes.service')();
 const groupsService = require('../services/groups.service')();
 const calendarService = require('../services/calendar.service')();
 const sectionService = require('../services/section.service')();
 
-router.get('/groups/:blocID', function (req, res, next) {
+router.get('/groups/:blocID', cors(), function (req, res, next) {
     let blocID = parseInt(req.params.blocID);
     groupsService.getByBloc(blocID)
         .then(result => {
@@ -18,7 +19,7 @@ router.get('/groups/:blocID', function (req, res, next) {
         })
 });
 
-router.get('/classes/:blocID', function (req, res, next) {
+router.get('/classes/:blocID', cors(), function (req, res, next) {
     let blocID = parseInt(req.params.blocID);
     classesService.getByBloc(blocID)
         .then(result => {
@@ -29,7 +30,7 @@ router.get('/classes/:blocID', function (req, res, next) {
         })
 });
 
-router.get('/calendar/:blocGroup', function (req, res, next) {
+router.get('/calendar/:blocGroup', cors(), function (req, res, next) {
     let blocGroup = req.params.blocGroup;
     calendarService.getByBlocGroup(blocGroup)
         .then(result => {
@@ -40,7 +41,7 @@ router.get('/calendar/:blocGroup', function (req, res, next) {
         })
 });
 
-router.get('/section/:section', function (req, res, next) {
+router.get('/section/:section', cors(), function (req, res, next) {
     let section = req.params.section;
     if(!getAllSections().includes(section)) return res.status(404).send('Not Found');
     sectionService.getBySection()
@@ -52,7 +53,9 @@ router.get('/section/:section', function (req, res, next) {
         })
 });
 
-router.post('/discord/send', function (req, res, next) {
+router.post('/discord/send', cors({
+    origin: "https://iesn.thibaultclaude.be"
+}), function (req, res, next) {
     try{
         const message = `**Section** : ${req.body.section}
                    **Cours** : ${req.body.classe || 'Non communiqué'}
