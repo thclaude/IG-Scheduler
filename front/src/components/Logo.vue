@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex align-center">
     <p id="logoText">
-      IESN-Scheduler
+      IG-Scheduler
     </p>
   </div>
 </template>

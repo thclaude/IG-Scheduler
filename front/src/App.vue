@@ -8,23 +8,10 @@
           color="warning"
           class="mb-5 text-center"
           v-if="isLastFridayOfMonth">
-        <strong>Avertissement - Maintenance Henallux</strong>
+        <strong>Avertissement - Maintenance</strong>
         <br/>
-        Aujourd'hui, comme tous les derniers vendredis du mois, a lieu une maintenance du système informatique Henallux.<br/>La
+        Aujourd'hui, comme tous les derniers vendredis du mois, a lieu une maintenance du système informatique.<br/>La
         génération de calendrier sera perturbée le temps de cette maintenance.
-      </v-alert>
-
-      <v-alert
-          prominent
-          text
-          icon="mdi-calendar-sync-outline"
-          color="info"
-          class="mb-5 text-center">
-        <strong>MàJ Horaire Henallux</strong>
-        <br/>
-        L'Henallux a modifié l'affichage de ses horaires au début de cette année : certains cours soient ajoutés dans ton horaire même si tu ne les as pas sélectionnés.
-        <br/>
-        Si ça t'arrive, ça serait cool de m'envoyer un MP Discord (<strong>tiiBz#1337</strong>) ou <router-link to="/bug" class="text-decoration-none">via ce formulaire</router-link> pour que je règle ça au plus vite ! 😎
       </v-alert>
       <v-container fluid class="main-container">
         <router-view/>
@@ -39,8 +26,8 @@ export default {
   name: 'App',
   metaInfo() {
     return {
-      title: 'IESN Scheduler',
-      titleTemplate: '%s | IESN Scheduler',
+      title: 'IG Scheduler',
+      titleTemplate: '%s | IG Scheduler',
       meta: [
         {
           property: 'og:url',

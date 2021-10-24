@@ -161,7 +161,7 @@ export default {
       meta: [
         {
           property: 'og:title',
-          content: 'Accueil - IESN Scheduler',
+          content: 'Accueil - IG Scheduler',
         }
       ]
     }
