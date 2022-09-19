@@ -6,7 +6,8 @@
                 "B",
                 "C",
                 "D",
-                "E"
+                "E",
+                "F"
             ],
             "classes": [
                 {
@@ -174,7 +175,8 @@
         "2": {
             "groups": [
                 "A",
-                "B"
+                "B",
+                "C"
             ],
             "classes": [
                 {
@@ -206,7 +208,7 @@
                     "completeName": "IG222 - Programmation orientée objet",
                     "optional": false,
                     "classes": null,
-                    "aliases": ["Technologies Web / Programmation orientée objet"]
+                    "aliases": ["Technologies Web / Programmation orientée objet", "Programmation orientée objet + Technologies Web"]
                 },
                 {
                     "section": "IG",
@@ -215,7 +217,7 @@
                     "completeName": "IG223 - Technologies Web",
                     "optional": false,
                     "classes": null,
-                    "aliases": ["Technologies Web / Programmation orientée objet"]
+                    "aliases": ["Technologies Web / Programmation orientée objet", "Programmation orientée objet + Technologies Web"]
                 },
                 {
                     "section": "IG",
@@ -270,7 +272,7 @@
                             "id": "NLAE2",
                             "displayName": "Langues étrangères : niveau 2",
                             "completeName": "NLAE2 - Langues étrangères : niveau 2",
-                            "aliases": ["Allemand", "Anglais renforcement", "Anglais", "Néerlandais // 2IG 2TI 2IR / Angl.renf.2AU", "Ndls / Allemand/Angl.renforc."]
+                            "aliases": ["Allemand", "Anglais renforcement", "Anglais", "Néerlandais // 2IG 2TI 2IR / Angl.renf.2AU", "Ndls / Allemand/Angl.renforc.", "Anglais renforcement (option)", "Néerlandais"]
                         }
                     ],
                     "aliases": null
@@ -377,7 +379,8 @@
         "3": {
             "groups": [
                 "A",
-                "B"
+                "B",
+                "C"
             ],
             "classes": [
                 {
@@ -423,7 +426,7 @@
                     "completeName": "IG325 - Langues étrangères : niveau 3",
                     "optional": false,
                     "classes": null,
-                    "aliases": ["Anglais / Anglais renforcement", "Néerlandais / Allemand"]
+                    "aliases": ["Anglais / Anglais renforcement", "Néerlandais / Allemand", "Allemand // Ndls", "Anglais renforcement (choix)", "Anglais"]
                 },
                 {
                     "section": "IG",
