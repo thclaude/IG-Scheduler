@@ -5,9 +5,9 @@ const ical = require("ical-generator");
 const cors = require('cors');
 
 const patternDate = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/;
-const patternTitle = /Matière : ([a-zA-Z0-9-'ÉéèÈà_!:.\/ ()]*)([^\n]*\n+)+/;
-const blocPattern = /\[(\d) IG [A-Z0-9]*]/
-
+const patternTitle = /Matière : ([a-zA-Z0-9-'ÉéèÈà_!+:.\/ ()]*)([^\n]*\n+)+/;
+// const blocPattern = /\[(\d) IG [A-Z0-9]*]/
+const blocPattern = /(?:(?:Promotions|Promotion) : (?:IE-[^IG]*-[1-3]B-[A-Z], )*IE-IG-(\d)B-([A-Z]))|\[(\d) IG [A-Z0-9]*]/
 const { cleanBlocs, allClassesLabels } = getBlocInfosForCalendar()
 
 const axiosPortailLog = getAxiosPortailLog();
@@ -54,6 +54,7 @@ router.get('/', cors(), async function (req, res, next) {
                 const message = `**Détails** : ${err}\n**FetchURLParams** : ${fetchURLParams}\n**Groupe** : ${req.query.grp.join(', ')}\n**Cours** :\nBloc 1 : ${req.query.crs1}\nBloc 2 : ${req.query.crs2}\nBloc 3 : ${req.query.crs3}`;
                 sendDiscordMessage({title: "Erreur /calendar", text: message });
                 updateClassesCodes();
+                res.sendStatus(500);
             })
     } else {
         res.redirect('/');
@@ -86,13 +87,14 @@ function cleanCourses(course) {
     let addThisCourse = !isCourse; // Si c'est un cours connu alors on ne l'ajoute pas de suite
 
     if(isCourse){
-        let label = course.details.match(patternTitle)[1];
-        let bloc = parseInt(course.text.match(blocPattern)[1]);
+        const blocMatches = course.details.match(blocPattern);
+        let label = course.details.match(patternTitle)[1].trim();
+        let bloc = parseInt(blocMatches[1] || blocMatches[3]);
         let foundCourse = cleanBlocs[bloc].filter(classe => classe.displayName === label || (classe.aliases && classe.aliases.includes(label)))
 
         addThisCourse = !foundCourse[0] || courses.some(c => c === foundCourse[0].id) // Si l'ID est présent, alors il sera affiché dans le calendrier
     }
-
+         
     return addThisCourse && !coreCourse; // On check si le cours doit être ajouté et qu'il n'a pas déjà été ajouté
 }
 
