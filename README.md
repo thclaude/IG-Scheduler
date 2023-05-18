@@ -1,15 +1,13 @@
-<h1 align="center">Welcome to IG Scheduler 👋</h1>
+<h1 align="center">Bienvenue sur IG Scheduler 👋</h1>
 
-### 🏠 [Site](https://iesn.thibaultclaude.be)
+### 🏠 [Site](https://iesn.thibaultclaude.be) - ✉️ [Contact](contact@thibaultclaude.be)
 
 ## Fonctionnalités
 
-- Génération d'iCal personnalisé selon le bloc, le groupe et les cours permettant une synchronisation dans les applications d'agenda
-- Affichage de l'horaire d'un groupe donné
+- IG Scheduler permet la génération d'iCal personnalisé selon le bloc, le groupe et les cours. 
+- Permet une synchronisation dans les applications d'agenda
    
-## Contact
+[//]: # (## Contact)
 
-* Discord : tiiBz#1337
-
-***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
+[//]: # ()
+[//]: # (* Discord : tiiBz#1337)
